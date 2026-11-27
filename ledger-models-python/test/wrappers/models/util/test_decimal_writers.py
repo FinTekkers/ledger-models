@@ -85,7 +85,7 @@ WRITERS = {
     "Transaction.create_from": (
         lambda v: Transaction.create_from(
             price=v, quantity=v, as_of=AS_OF, price_type=PriceTypeProto.ABSOLUTE).proto,
-        lambda t: [t.price.price, t.quantity]),
+        lambda t: [t.price.mid, t.quantity]),
     "BondSecurity.from_pricer_inputs": (_bond, _bond_decimals),
     "MortgageBackedSecurity.from_pricer_inputs": (
         _mbs, lambda s: _bond_decimals(s) + [
@@ -98,13 +98,13 @@ WRITERS = {
         _tips, lambda s: _bond_decimals(s) + [s.tips_extension.base_cpi]),
     "Price.create_price": (
         lambda v: Price.create_price(Security(SECURITY), v, Timestamp()).proto,
-        lambda p: [p.price]),
+        lambda p: [p.mid]),
     "CreatePriceRequest.create_price_request": (
         lambda v: CreatePriceRequest.create_price_request(SECURITY, v).proto,
-        lambda r: [r.create_price_input.price]),
+        lambda r: [r.create_price_input.mid]),
     "CreatePriceRequest.create_or_update_request": (
         lambda v: CreatePriceRequest.create_or_update_request(SECURITY, v, AS_OF).proto,
-        lambda r: [r.create_price_input.price]),
+        lambda r: [r.create_price_input.mid]),
     "CreateSecurityRequest.create_ust_security_request": (
         _ust, lambda s: _bond_decimals(s) + [
             s.frn_extension.spread,
@@ -114,7 +114,7 @@ WRITERS = {
         lambda v: CreateTransactionRequest.create_transaction_request(
             price=v, quantity=v, as_of=AS_OF,
             price_type=PriceTypeProto.ABSOLUTE).proto.create_transaction_input,
-        lambda t: [t.price.price, t.quantity]),
+        lambda t: [t.price.mid, t.quantity]),
 }
 
 
@@ -142,7 +142,7 @@ def test_writer_rejects_float(name):
 def test_default_transaction_price_writes_the_compact_form():
     txn = Transaction.create_from(as_of=AS_OF, price_type=PriceTypeProto.ABSOLUTE).proto
 
-    assert decode_decimal(txn.price.price).as_tuple() == Decimal("-100.00").as_tuple()
+    assert decode_decimal(txn.price.mid).as_tuple() == Decimal("-100.00").as_tuple()
     assert txn.quantity.unscaled_value == b"\x64"
     assert txn.quantity.scale == 0
 

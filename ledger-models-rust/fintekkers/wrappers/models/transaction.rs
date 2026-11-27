@@ -531,7 +531,7 @@ impl CreateTransaction {
             PriceProto {
                 uuid: Some(UUIDWrapper::new_random().into()),
                 as_of: Some(as_of.clone()),
-                price: Some(decimal_proto(&self.price)),
+                mid: Some(decimal_proto(&self.price)),
                 security: Some(self.security.clone()),
                 price_type: price_type as i32,
                 ..Default::default()

@@ -19,7 +19,7 @@ fn valid_price() -> PriceProto {
             uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
             ..Default::default()
         }),
-        price: Some(decimal("1.5")),
+        mid: Some(decimal("1.5")),
         ..Default::default()
     }
 }
@@ -31,9 +31,9 @@ fn valid_price_has_no_errors() {
 }
 
 #[test]
-fn missing_price_has_one_error() {
+fn missing_mid_has_one_error() {
     let mut p = valid_price();
-    p.price = None;
+    p.mid = None;
     let errors: Vec<ErrorProto> = validate_price_required_fields(&p);
     assert_eq!(errors.len(), 1, "{:?}", errors);
 }

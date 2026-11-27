@@ -200,7 +200,7 @@ function testSerialization() {
         expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
         expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1");
         let price = position.getFieldValue(field_pb_1.FieldProto.PRICE);
-        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getPrice()))).toBe("1.0");
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getMid()))).toBe("1.0");
         let tenor = position.getFieldValue(field_pb_1.FieldProto.TENOR);
         expect(tenor.getTenorDescription()).toBe("3M");
         return true;
@@ -220,7 +220,7 @@ function getPosition(includeUnknownEnumValue) {
     let productType = "Test product type";
     let id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
     let price = new price_pb_1.PriceProto()
-        .setPrice((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)("1.0")))
+        .setMid((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)("1.0")))
         .setUuid(id.toUUIDProto())
         .setSecurity(security);
     let tenor = new tenor_pb_1.TenorProto()

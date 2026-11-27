@@ -14,6 +14,7 @@ import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.SecurityProtoOrBuilder;
 import fintekkers.models.transaction.TransactionProto;
 import fintekkers.models.transaction.TransactionTypeProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
 import fintekkers.models.util.ObjectTypeProto;
 import fintekkers.models.util.VersionProto;
@@ -21,6 +22,7 @@ import protos.serializers.IRawDataModelObjectSerializer;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -467,10 +469,17 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         }
         return new Price(
                 ProtoSerializationUtil.deserializeUUID(p.getUuid()),
-                ProtoSerializationUtil.deserializeBigDecimal(p.getPrice()),
+                optionalDecimal(p.getMid()),
+                optionalDecimal(p.getBid()),
+                optionalDecimal(p.getAsk()),
                 security,
                 ProtoSerializationUtil.deserializeRequiredTimestamp(p.hasAsOf() ? p.getAsOf() : null, "price.as_of"),
                 p.getPriceType());
+    }
+
+    /** LM-508: one side of a price, or null when it is unset; as PriceSerializer reads it. */
+    private static BigDecimal optionalDecimal(DecimalValueProto value) {
+        return ProtoSerializationUtil.isUnsetDecimal(value) ? null : ProtoSerializationUtil.deserializeBigDecimal(value);
     }
 
     private static TransactionType transactionTypeOf(TransactionTypeProto type) {

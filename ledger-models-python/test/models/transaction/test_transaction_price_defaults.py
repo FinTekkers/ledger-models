@@ -27,7 +27,7 @@ PRICE_AS_OF = LocalTimestampProto(timestamp=Timestamp(seconds=1718377200), time_
 
 def _price(**kwargs) -> PriceProto:
     return PriceProto(
-        price=encode_decimal(Decimal("99.5")),
+        mid=encode_decimal(Decimal("99.5")),
         **kwargs,
     )
 

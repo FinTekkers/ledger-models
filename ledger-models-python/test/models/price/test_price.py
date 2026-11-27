@@ -84,7 +84,7 @@ class TestPrice(unittest.TestCase):
         proto = self.price.proto
         self.assertTrue(proto.HasField('uuid'))
         self.assertTrue(proto.HasField('as_of'))
-        self.assertTrue(proto.HasField('price'))
+        self.assertTrue(proto.HasField('mid'))
         self.assertEqual(proto.is_link, False)
         self.assertEqual(proto.object_type, ObjectTypeProto.OBJECT_TYPE_PRICE)
         self.assertEqual((proto.version.major, proto.version.minor, proto.version.patch), (0, 0, 1))

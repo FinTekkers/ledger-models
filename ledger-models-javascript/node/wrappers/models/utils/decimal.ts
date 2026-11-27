@@ -34,7 +34,10 @@ export const MAX_UNSCALED_BYTES = 1702;
 // No bigint literals: tsconfig targets es2016.
 const ZERO = BigInt(0);
 const ONE = BigInt(1);
+const TWO = BigInt(2);
+const FIVE = BigInt(5);
 const EIGHT = BigInt(8);
+const TEN = BigInt(10);
 
 /** An exact decimal: `unscaled x 10^-scale`. `scale` is a count, never a value. */
 export interface CompactDecimal {
@@ -166,6 +169,20 @@ export function toCanonicalString(v: CompactDecimal): string {
         return `${sign}${digits.slice(0, digits.length - v.scale)}.${digits.slice(digits.length - v.scale)}`;
     }
     return `${sign}0.${'0'.repeat(v.scale - digits.length)}${digits}`;
+}
+
+/**
+ * (a + b) / 2, exact (LM-508): BigInt arithmetic on the unscaled values,
+ * never decimal.js division, whose default precision is 20 digits. The sum
+ * keeps the larger scale; an even sum is halved at that scale and an odd one
+ * is multiplied by 5 at one place more, so 99 and 101 give 100 and 99.5 and
+ * 100 give 99.75, the same in every language.
+ */
+export function midpoint(a: CompactDecimal, b: CompactDecimal): CompactDecimal {
+    const scale = Math.max(a.scale, b.scale);
+    const total = a.unscaled * TEN ** BigInt(scale - a.scale) + b.unscaled * TEN ** BigInt(scale - b.scale);
+    if (total % TWO === ZERO) return { unscaled: total / TWO, scale };
+    return { unscaled: total * FIVE, scale: scale + 1 };
 }
 
 /** Minimal two's-complement big-endian bytes. Zero is the single byte 0x00. */

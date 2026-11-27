@@ -58,7 +58,7 @@ function fullPriceProto(uuid: UUID, asOf: ZonedDateTime, value: string): PricePr
   p.setAsOf(asOf.toProto());
   p.setIsLink(false);
   const dv = encodeDecimal(parseDecimalString(value));
-  p.setPrice(dv);
+  p.setMid(dv);
   return p;
 }
 

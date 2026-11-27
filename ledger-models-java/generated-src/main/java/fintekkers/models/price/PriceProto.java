@@ -222,42 +222,45 @@ private static final long serialVersionUID = 0L;
     return validTo_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : validTo_;
   }
 
-  public static final int PRICE_FIELD_NUMBER = 10;
-  private fintekkers.models.util.DecimalValue.DecimalValueProto price_;
+  public static final int MID_FIELD_NUMBER = 10;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto mid_;
   /**
    * <pre>
-   * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+   * The mid. Field 10 was named `price` before LM-508; the wire is
+   * unchanged, so a price written then reads as a mid. Optional.
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
-   * @return Whether the price field is set.
+   * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
+   * @return Whether the mid field is set.
    */
   @java.lang.Override
-  public boolean hasPrice() {
-    return price_ != null;
+  public boolean hasMid() {
+    return mid_ != null;
   }
   /**
    * <pre>
-   * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+   * The mid. Field 10 was named `price` before LM-508; the wire is
+   * unchanged, so a price written then reads as a mid. Optional.
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
-   * @return The price.
+   * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
+   * @return The mid.
    */
   @java.lang.Override
-  public fintekkers.models.util.DecimalValue.DecimalValueProto getPrice() {
-    return price_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : price_;
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getMid() {
+    return mid_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : mid_;
   }
   /**
    * <pre>
-   * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+   * The mid. Field 10 was named `price` before LM-508; the wire is
+   * unchanged, so a price written then reads as a mid. Optional.
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
    */
   @java.lang.Override
-  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceOrBuilder() {
-    return price_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : price_;
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMidOrBuilder() {
+    return mid_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : mid_;
   }
 
   public static final int SECURITY_FIELD_NUMBER = 11;
@@ -289,6 +292,10 @@ private static final long serialVersionUID = 0L;
   public static final int PRICE_TYPE_FIELD_NUMBER = 12;
   private int priceType_ = 0;
   /**
+   * <pre>
+   * The unit of mid, bid and ask.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
    * @return The enum numeric value on the wire for priceType.
    */
@@ -296,6 +303,10 @@ private static final long serialVersionUID = 0L;
     return priceType_;
   }
   /**
+   * <pre>
+   * The unit of mid, bid and ask.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
    * @return The priceType.
    */
@@ -320,6 +331,85 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override public fintekkers.models.price.PriceSourceProto getPriceSource() {
     fintekkers.models.price.PriceSourceProto result = fintekkers.models.price.PriceSourceProto.forNumber(priceSource_);
     return result == null ? fintekkers.models.price.PriceSourceProto.UNRECOGNIZED : result;
+  }
+
+  public static final int BID_FIELD_NUMBER = 14;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto bid_;
+  /**
+   * <pre>
+   * The bid: the price a buyer quotes. Optional.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+   * @return Whether the bid field is set.
+   */
+  @java.lang.Override
+  public boolean hasBid() {
+    return bid_ != null;
+  }
+  /**
+   * <pre>
+   * The bid: the price a buyer quotes. Optional.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+   * @return The bid.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getBid() {
+    return bid_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : bid_;
+  }
+  /**
+   * <pre>
+   * The bid: the price a buyer quotes. Optional.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBidOrBuilder() {
+    return bid_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : bid_;
+  }
+
+  public static final int ASK_FIELD_NUMBER = 15;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto ask_;
+  /**
+   * <pre>
+   * The ask (offer): the price a seller quotes. Optional; when bid is also
+   * set, ask &gt;= bid.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+   * @return Whether the ask field is set.
+   */
+  @java.lang.Override
+  public boolean hasAsk() {
+    return ask_ != null;
+  }
+  /**
+   * <pre>
+   * The ask (offer): the price a seller quotes. Optional; when bid is also
+   * set, ask &gt;= bid.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+   * @return The ask.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getAsk() {
+    return ask_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : ask_;
+  }
+  /**
+   * <pre>
+   * The ask (offer): the price a seller quotes. Optional; when bid is also
+   * set, ask &gt;= bid.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAskOrBuilder() {
+    return ask_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : ask_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -357,8 +447,8 @@ private static final long serialVersionUID = 0L;
     if (validTo_ != null) {
       output.writeMessage(9, getValidTo());
     }
-    if (price_ != null) {
-      output.writeMessage(10, getPrice());
+    if (mid_ != null) {
+      output.writeMessage(10, getMid());
     }
     if (security_ != null) {
       output.writeMessage(11, getSecurity());
@@ -368,6 +458,12 @@ private static final long serialVersionUID = 0L;
     }
     if (priceSource_ != fintekkers.models.price.PriceSourceProto.UNKNOWN_PRICE_SOURCE.getNumber()) {
       output.writeEnum(13, priceSource_);
+    }
+    if (bid_ != null) {
+      output.writeMessage(14, getBid());
+    }
+    if (ask_ != null) {
+      output.writeMessage(15, getAsk());
     }
     getUnknownFields().writeTo(output);
   }
@@ -406,9 +502,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(9, getValidTo());
     }
-    if (price_ != null) {
+    if (mid_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(10, getPrice());
+        .computeMessageSize(10, getMid());
     }
     if (security_ != null) {
       size += com.google.protobuf.CodedOutputStream
@@ -421,6 +517,14 @@ private static final long serialVersionUID = 0L;
     if (priceSource_ != fintekkers.models.price.PriceSourceProto.UNKNOWN_PRICE_SOURCE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(13, priceSource_);
+    }
+    if (bid_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(14, getBid());
+    }
+    if (ask_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(15, getAsk());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -465,10 +569,10 @@ private static final long serialVersionUID = 0L;
       if (!getValidTo()
           .equals(other.getValidTo())) return false;
     }
-    if (hasPrice() != other.hasPrice()) return false;
-    if (hasPrice()) {
-      if (!getPrice()
-          .equals(other.getPrice())) return false;
+    if (hasMid() != other.hasMid()) return false;
+    if (hasMid()) {
+      if (!getMid()
+          .equals(other.getMid())) return false;
     }
     if (hasSecurity() != other.hasSecurity()) return false;
     if (hasSecurity()) {
@@ -477,6 +581,16 @@ private static final long serialVersionUID = 0L;
     }
     if (priceType_ != other.priceType_) return false;
     if (priceSource_ != other.priceSource_) return false;
+    if (hasBid() != other.hasBid()) return false;
+    if (hasBid()) {
+      if (!getBid()
+          .equals(other.getBid())) return false;
+    }
+    if (hasAsk() != other.hasAsk()) return false;
+    if (hasAsk()) {
+      if (!getAsk()
+          .equals(other.getAsk())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -513,9 +627,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + VALID_TO_FIELD_NUMBER;
       hash = (53 * hash) + getValidTo().hashCode();
     }
-    if (hasPrice()) {
-      hash = (37 * hash) + PRICE_FIELD_NUMBER;
-      hash = (53 * hash) + getPrice().hashCode();
+    if (hasMid()) {
+      hash = (37 * hash) + MID_FIELD_NUMBER;
+      hash = (53 * hash) + getMid().hashCode();
     }
     if (hasSecurity()) {
       hash = (37 * hash) + SECURITY_FIELD_NUMBER;
@@ -525,6 +639,14 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + priceType_;
     hash = (37 * hash) + PRICE_SOURCE_FIELD_NUMBER;
     hash = (53 * hash) + priceSource_;
+    if (hasBid()) {
+      hash = (37 * hash) + BID_FIELD_NUMBER;
+      hash = (53 * hash) + getBid().hashCode();
+    }
+    if (hasAsk()) {
+      hash = (37 * hash) + ASK_FIELD_NUMBER;
+      hash = (53 * hash) + getAsk().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -681,10 +803,10 @@ private static final long serialVersionUID = 0L;
         validToBuilder_.dispose();
         validToBuilder_ = null;
       }
-      price_ = null;
-      if (priceBuilder_ != null) {
-        priceBuilder_.dispose();
-        priceBuilder_ = null;
+      mid_ = null;
+      if (midBuilder_ != null) {
+        midBuilder_.dispose();
+        midBuilder_ = null;
       }
       security_ = null;
       if (securityBuilder_ != null) {
@@ -693,6 +815,16 @@ private static final long serialVersionUID = 0L;
       }
       priceType_ = 0;
       priceSource_ = 0;
+      bid_ = null;
+      if (bidBuilder_ != null) {
+        bidBuilder_.dispose();
+        bidBuilder_ = null;
+      }
+      ask_ = null;
+      if (askBuilder_ != null) {
+        askBuilder_.dispose();
+        askBuilder_ = null;
+      }
       return this;
     }
 
@@ -758,9 +890,9 @@ private static final long serialVersionUID = 0L;
             : validToBuilder_.build();
       }
       if (((from_bitField0_ & 0x00000080) != 0)) {
-        result.price_ = priceBuilder_ == null
-            ? price_
-            : priceBuilder_.build();
+        result.mid_ = midBuilder_ == null
+            ? mid_
+            : midBuilder_.build();
       }
       if (((from_bitField0_ & 0x00000100) != 0)) {
         result.security_ = securityBuilder_ == null
@@ -772,6 +904,16 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000400) != 0)) {
         result.priceSource_ = priceSource_;
+      }
+      if (((from_bitField0_ & 0x00000800) != 0)) {
+        result.bid_ = bidBuilder_ == null
+            ? bid_
+            : bidBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00001000) != 0)) {
+        result.ask_ = askBuilder_ == null
+            ? ask_
+            : askBuilder_.build();
       }
     }
 
@@ -840,8 +982,8 @@ private static final long serialVersionUID = 0L;
       if (other.hasValidTo()) {
         mergeValidTo(other.getValidTo());
       }
-      if (other.hasPrice()) {
-        mergePrice(other.getPrice());
+      if (other.hasMid()) {
+        mergeMid(other.getMid());
       }
       if (other.hasSecurity()) {
         mergeSecurity(other.getSecurity());
@@ -851,6 +993,12 @@ private static final long serialVersionUID = 0L;
       }
       if (other.priceSource_ != 0) {
         setPriceSourceValue(other.getPriceSourceValue());
+      }
+      if (other.hasBid()) {
+        mergeBid(other.getBid());
+      }
+      if (other.hasAsk()) {
+        mergeAsk(other.getAsk());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -925,7 +1073,7 @@ private static final long serialVersionUID = 0L;
             } // case 74
             case 82: {
               input.readMessage(
-                  getPriceFieldBuilder().getBuilder(),
+                  getMidFieldBuilder().getBuilder(),
                   extensionRegistry);
               bitField0_ |= 0x00000080;
               break;
@@ -947,6 +1095,20 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000400;
               break;
             } // case 104
+            case 114: {
+              input.readMessage(
+                  getBidFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000800;
+              break;
+            } // case 114
+            case 122: {
+              input.readMessage(
+                  getAskFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00001000;
+              break;
+            } // case 122
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1695,50 +1857,53 @@ private static final long serialVersionUID = 0L;
       return validToBuilder_;
     }
 
-    private fintekkers.models.util.DecimalValue.DecimalValueProto price_;
+    private fintekkers.models.util.DecimalValue.DecimalValueProto mid_;
     private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> priceBuilder_;
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> midBuilder_;
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
-     * @return Whether the price field is set.
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
+     * @return Whether the mid field is set.
      */
-    public boolean hasPrice() {
+    public boolean hasMid() {
       return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
-     * @return The price.
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
+     * @return The mid.
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProto getPrice() {
-      if (priceBuilder_ == null) {
-        return price_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : price_;
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getMid() {
+      if (midBuilder_ == null) {
+        return mid_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : mid_;
       } else {
-        return priceBuilder_.getMessage();
+        return midBuilder_.getMessage();
       }
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
-    public Builder setPrice(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
-      if (priceBuilder_ == null) {
+    public Builder setMid(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (midBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        price_ = value;
+        mid_ = value;
       } else {
-        priceBuilder_.setMessage(value);
+        midBuilder_.setMessage(value);
       }
       bitField0_ |= 0x00000080;
       onChanged();
@@ -1746,17 +1911,18 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
-    public Builder setPrice(
+    public Builder setMid(
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
-      if (priceBuilder_ == null) {
-        price_ = builderForValue.build();
+      if (midBuilder_ == null) {
+        mid_ = builderForValue.build();
       } else {
-        priceBuilder_.setMessage(builderForValue.build());
+        midBuilder_.setMessage(builderForValue.build());
       }
       bitField0_ |= 0x00000080;
       onChanged();
@@ -1764,22 +1930,23 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
-    public Builder mergePrice(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
-      if (priceBuilder_ == null) {
+    public Builder mergeMid(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (midBuilder_ == null) {
         if (((bitField0_ & 0x00000080) != 0) &&
-          price_ != null &&
-          price_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
-          getPriceBuilder().mergeFrom(value);
+          mid_ != null &&
+          mid_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getMidBuilder().mergeFrom(value);
         } else {
-          price_ = value;
+          mid_ = value;
         }
       } else {
-        priceBuilder_.mergeFrom(value);
+        midBuilder_.mergeFrom(value);
       }
       bitField0_ |= 0x00000080;
       onChanged();
@@ -1787,67 +1954,71 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
-    public Builder clearPrice() {
+    public Builder clearMid() {
       bitField0_ = (bitField0_ & ~0x00000080);
-      price_ = null;
-      if (priceBuilder_ != null) {
-        priceBuilder_.dispose();
-        priceBuilder_ = null;
+      mid_ = null;
+      if (midBuilder_ != null) {
+        midBuilder_.dispose();
+        midBuilder_ = null;
       }
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getPriceBuilder() {
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getMidBuilder() {
       bitField0_ |= 0x00000080;
       onChanged();
-      return getPriceFieldBuilder().getBuilder();
+      return getMidFieldBuilder().getBuilder();
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceOrBuilder() {
-      if (priceBuilder_ != null) {
-        return priceBuilder_.getMessageOrBuilder();
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMidOrBuilder() {
+      if (midBuilder_ != null) {
+        return midBuilder_.getMessageOrBuilder();
       } else {
-        return price_ == null ?
-            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : price_;
+        return mid_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : mid_;
       }
     }
     /**
      * <pre>
-     * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+     * The mid. Field 10 was named `price` before LM-508; the wire is
+     * unchanged, so a price written then reads as a mid. Optional.
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
-        getPriceFieldBuilder() {
-      if (priceBuilder_ == null) {
-        priceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+        getMidFieldBuilder() {
+      if (midBuilder_ == null) {
+        midBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
-                getPrice(),
+                getMid(),
                 getParentForChildren(),
                 isClean());
-        price_ = null;
+        mid_ = null;
       }
-      return priceBuilder_;
+      return midBuilder_;
     }
 
     private fintekkers.models.security.SecurityProto security_;
@@ -1971,6 +2142,10 @@ private static final long serialVersionUID = 0L;
 
     private int priceType_ = 0;
     /**
+     * <pre>
+     * The unit of mid, bid and ask.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
      * @return The enum numeric value on the wire for priceType.
      */
@@ -1978,6 +2153,10 @@ private static final long serialVersionUID = 0L;
       return priceType_;
     }
     /**
+     * <pre>
+     * The unit of mid, bid and ask.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
      * @param value The enum numeric value on the wire for priceType to set.
      * @return This builder for chaining.
@@ -1989,6 +2168,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The unit of mid, bid and ask.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
      * @return The priceType.
      */
@@ -1998,6 +2181,10 @@ private static final long serialVersionUID = 0L;
       return result == null ? fintekkers.models.price.PriceTypeProto.UNRECOGNIZED : result;
     }
     /**
+     * <pre>
+     * The unit of mid, bid and ask.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
      * @param value The priceType to set.
      * @return This builder for chaining.
@@ -2012,6 +2199,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The unit of mid, bid and ask.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
      * @return This builder for chaining.
      */
@@ -2073,6 +2264,325 @@ private static final long serialVersionUID = 0L;
       priceSource_ = 0;
       onChanged();
       return this;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto bid_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> bidBuilder_;
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     * @return Whether the bid field is set.
+     */
+    public boolean hasBid() {
+      return ((bitField0_ & 0x00000800) != 0);
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     * @return The bid.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getBid() {
+      if (bidBuilder_ == null) {
+        return bid_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : bid_;
+      } else {
+        return bidBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    public Builder setBid(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (bidBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bid_ = value;
+      } else {
+        bidBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    public Builder setBid(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (bidBuilder_ == null) {
+        bid_ = builderForValue.build();
+      } else {
+        bidBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    public Builder mergeBid(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (bidBuilder_ == null) {
+        if (((bitField0_ & 0x00000800) != 0) &&
+          bid_ != null &&
+          bid_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getBidBuilder().mergeFrom(value);
+        } else {
+          bid_ = value;
+        }
+      } else {
+        bidBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    public Builder clearBid() {
+      bitField0_ = (bitField0_ & ~0x00000800);
+      bid_ = null;
+      if (bidBuilder_ != null) {
+        bidBuilder_.dispose();
+        bidBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getBidBuilder() {
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return getBidFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBidOrBuilder() {
+      if (bidBuilder_ != null) {
+        return bidBuilder_.getMessageOrBuilder();
+      } else {
+        return bid_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : bid_;
+      }
+    }
+    /**
+     * <pre>
+     * The bid: the price a buyer quotes. Optional.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getBidFieldBuilder() {
+      if (bidBuilder_ == null) {
+        bidBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getBid(),
+                getParentForChildren(),
+                isClean());
+        bid_ = null;
+      }
+      return bidBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto ask_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> askBuilder_;
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     * @return Whether the ask field is set.
+     */
+    public boolean hasAsk() {
+      return ((bitField0_ & 0x00001000) != 0);
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     * @return The ask.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getAsk() {
+      if (askBuilder_ == null) {
+        return ask_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : ask_;
+      } else {
+        return askBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    public Builder setAsk(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (askBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ask_ = value;
+      } else {
+        askBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00001000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    public Builder setAsk(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (askBuilder_ == null) {
+        ask_ = builderForValue.build();
+      } else {
+        askBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00001000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    public Builder mergeAsk(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (askBuilder_ == null) {
+        if (((bitField0_ & 0x00001000) != 0) &&
+          ask_ != null &&
+          ask_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getAskBuilder().mergeFrom(value);
+        } else {
+          ask_ = value;
+        }
+      } else {
+        askBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00001000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    public Builder clearAsk() {
+      bitField0_ = (bitField0_ & ~0x00001000);
+      ask_ = null;
+      if (askBuilder_ != null) {
+        askBuilder_.dispose();
+        askBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getAskBuilder() {
+      bitField0_ |= 0x00001000;
+      onChanged();
+      return getAskFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAskOrBuilder() {
+      if (askBuilder_ != null) {
+        return askBuilder_.getMessageOrBuilder();
+      } else {
+        return ask_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : ask_;
+      }
+    }
+    /**
+     * <pre>
+     * The ask (offer): the price a seller quotes. Optional; when bid is also
+     * set, ask &gt;= bid.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getAskFieldBuilder() {
+      if (askBuilder_ == null) {
+        askBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getAsk(),
+                getParentForChildren(),
+                isClean());
+        ask_ = null;
+      }
+      return askBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

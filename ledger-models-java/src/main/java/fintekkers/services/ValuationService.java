@@ -97,7 +97,7 @@ public class ValuationService {
 
         DecimalValue.DecimalValueProto priceDecimal = ProtoSerializationUtil.serializeBigDecimal(BigDecimal.TEN);
 
-        PriceProto price = PriceProto.newBuilder().setSecurity(equitySecurity).setAsOf(asOf).setPrice(priceDecimal).build();
+        PriceProto price = PriceProto.newBuilder().setSecurity(equitySecurity).setAsOf(asOf).setMid(priceDecimal).build();
 
         PositionProto.Builder position = PositionProto.newBuilder().addMeasures(MeasureMapEntry.newBuilder()
                 .setMeasure(MeasureProto.DIRECTED_QUANTITY)

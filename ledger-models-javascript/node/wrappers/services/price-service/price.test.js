@@ -81,7 +81,7 @@ test('search with empty filter returns prices', () => __awaiter(void 0, void 0, 
     expect(prices.length).toBeGreaterThan(0);
     // Verify price structure
     const firstPrice = prices[0];
-    expect(firstPrice.getPrice()).toBeTruthy();
+    expect(firstPrice.getMid()).toBeTruthy();
     expect(firstPrice.getSecurity()).toBeTruthy();
 }), 120000);
 test('search by SECURITY_ID returns prices for a known security', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,7 +97,7 @@ test('search by SECURITY_ID returns prices for a known security', () => __awaite
     expect(prices.length).toBeGreaterThan(0);
     for (const price of prices) {
         expect(price.getSecurity()).toBeTruthy();
-        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getPrice()))).toBeTruthy();
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getMid()))).toBeTruthy();
     }
 }), 120000);
 test('search for CUSIP 91282CPZ8 (UUID 18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95) returns prices', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -113,7 +113,7 @@ test('search for CUSIP 91282CPZ8 (UUID 18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95) ret
     if (prices.length > 0) {
         for (const price of prices) {
             expect(price.getSecurity()).toBeTruthy();
-            const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getPrice()));
+            const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getMid()));
             expect(priceValue).toBeTruthy();
             console.log(`  Price: ${priceValue}`);
         }
@@ -131,7 +131,7 @@ function buildPriceProto(securityUuid, priceValue) {
     price.setUuid(uuid_1.UUID.random().toUUIDProto());
     price.setAsOf(now.toProto());
     const decimalValue = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(priceValue));
-    price.setPrice(decimalValue);
+    price.setMid(decimalValue);
     // Set security as a link reference
     const security = new security_pb_1.SecurityProto();
     security.setUuid(securityUuid.toUUIDProto());
@@ -155,7 +155,7 @@ test('createOrUpdate inserts a price via the gRPC API', () => __awaiter(void 0, 
     const filter = new positionfilter_1.PositionFilter()
         .addEqualsFilter(field_pb_1.FieldProto.SECURITY_ID, securityUuid);
     const prices = yield priceService.searchPrice(now.toProto(), filter);
-    const priceValues = prices.map(p => (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(p.getPrice())));
+    const priceValues = prices.map(p => (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(p.getMid())));
     expect(priceValues).toContain('99.875');
 }), 120000);
 test('validateCreateOrUpdate returns no errors for a valid price', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -182,7 +182,7 @@ test('createOrUpdate price can be retrieved via search', () => __awaiter(void 0,
         .addEqualsFilter(field_pb_1.FieldProto.SECURITY_ID, securityUuid);
     const prices = yield priceService.searchPrice(now.toProto(), filter);
     expect(prices.length).toBeGreaterThan(0);
-    const priceValues = prices.map(p => (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(p.getPrice())));
+    const priceValues = prices.map(p => (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(p.getMid())));
     console.log(`Found ${prices.length} prices for security, values: ${priceValues.join(', ')}`);
     expect(priceValues).toContain('101.5');
 }), 120000);

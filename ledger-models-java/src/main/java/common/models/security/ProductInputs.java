@@ -11,11 +11,13 @@ import com.google.protobuf.Message;
 import common.models.errors.MissingMarketDataError;
 import common.models.errors.ModelValidationException;
 import common.models.errors.UnmappedProductTypeError;
+import common.models.price.PriceQuote;
 import fintekkers.models.position.MeasureProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.requests.valuation.BondInput;
 import fintekkers.requests.valuation.CashInput;
 import fintekkers.requests.valuation.EquityInput;
@@ -253,9 +255,14 @@ public final class ProductInputs {
     /**
      * The {@code ProductInput} for {@code security}, in the input type {@link #inputTypeFor} picks.
      *
-     * <p>Sets the input type's security and copies {@code price.price} as is into
-     * clean_price (bond, tips, frn, mbs) or unit_price (equity, cash). Never
-     * sets cost_basis. {@code marketData} supplies the input type's other fields.
+     * <p>Sets the input type's security and puts the price's resolved value
+     * into clean_price (bond, tips, frn, mbs) or unit_price (equity, cash).
+     * LM-508: the value is the PriceProto comment's order: mid if set; else
+     * the bid/ask midpoint when both are set; else the one side that is set,
+     * so a bid-only quote is valued at its bid. Mid, bid or ask is copied as
+     * is; only the midpoint is a new decimal. With none set the price field is
+     * left unset. Never sets cost_basis. {@code marketData} supplies the input
+     * type's other fields.
      *
      * @throws UnmappedProductTypeError when the security's type has no input type
      * @throws MissingMarketDataError   when {@code marketData} lacks a kind the input type requires
@@ -263,24 +270,25 @@ public final class ProductInputs {
     public static ProductInput forSecurity(SecurityProto security, PriceProto price, MarketData marketData) {
         MarketData md = marketData != null ? marketData : MarketData.NONE;
         String inputType = inputTypeFor(security);
+        DecimalValueProto p = resolvedPrice(price);
         ProductInput.Builder out = ProductInput.newBuilder();
         switch (inputType) {
             case "bond": {
                 BondInput.Builder b = BondInput.newBuilder().setSecurity(security);
-                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                if (p != null) b.setCleanPrice(p);
                 out.setBond(b);
                 break;
             }
             case "tips": {
                 TipsInput.Builder b = TipsInput.newBuilder().setSecurity(security);
-                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                if (p != null) b.setCleanPrice(p);
                 md.cpi().ifPresent(b::setCpi);
                 out.setTips(b);
                 break;
             }
             case "frn": {
                 FrnInput.Builder b = FrnInput.newBuilder().setSecurity(security);
-                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                if (p != null) b.setCleanPrice(p);
                 md.curve().ifPresent(b::setCurve);
                 b.addAllFixings(md.fixings());
                 out.setFrn(b);
@@ -288,19 +296,19 @@ public final class ProductInputs {
             }
             case "mbs": {
                 MbsInput.Builder b = MbsInput.newBuilder().setSecurity(security);
-                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                if (p != null) b.setCleanPrice(p);
                 out.setMbs(b);
                 break;
             }
             case "equity": {
                 EquityInput.Builder b = EquityInput.newBuilder().setSecurity(security);
-                if (price.hasPrice()) b.setUnitPrice(price.getPrice());
+                if (p != null) b.setUnitPrice(p);
                 out.setEquity(b);
                 break;
             }
             case "cash": {
                 CashInput.Builder b = CashInput.newBuilder().setSecurity(security);
-                if (price.hasPrice()) b.setUnitPrice(price.getPrice());
+                if (p != null) b.setUnitPrice(p);
                 out.setCash(b);
                 break;
             }
@@ -310,6 +318,22 @@ public final class ProductInputs {
         ProductInput built = out.build();
         checkProductInput(built);
         return built;
+    }
+
+    /** LM-508: the resolved price decimal for {@link #forSecurity}, or null when none is set. */
+    private static DecimalValueProto resolvedPrice(PriceProto price) {
+        boolean mid = !ProtoSerializationUtil.isUnsetDecimal(price.getMid());
+        boolean bid = !ProtoSerializationUtil.isUnsetDecimal(price.getBid());
+        boolean ask = !ProtoSerializationUtil.isUnsetDecimal(price.getAsk());
+        if (mid) return price.getMid();
+        if (bid && ask) {
+            return ProtoSerializationUtil.serializeBigDecimal(PriceQuote.midpoint(
+                    ProtoSerializationUtil.deserializeBigDecimal(price.getBid()),
+                    ProtoSerializationUtil.deserializeBigDecimal(price.getAsk())));
+        }
+        if (bid) return price.getBid();
+        if (ask) return price.getAsk();
+        return null;
     }
 
     /**

@@ -137,7 +137,7 @@ function getTransaction(now, positionFilter, today) {
             .setAsOf(now.toProto())
             .setSecurity(security.proto)
             .setUuid(uuid.UUID.random().toUUIDProto())
-            .setPrice((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('100.00'))));
+            .setMid((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('100.00'))));
         transaction.setQuantity((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('10000.00')));
         transaction.setPortfolio(portfolio.proto);
         transaction.setSecurity(security.proto);

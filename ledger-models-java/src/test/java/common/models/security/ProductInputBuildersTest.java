@@ -186,7 +186,7 @@ class ProductInputBuildersTest {
         assertEquals(security, body.getField(d.findFieldByName("security")));
         String priceField = UNIT_PRICED.contains(inputType) ? "unit_price" : "clean_price";
         String otherField = UNIT_PRICED.contains(inputType) ? "clean_price" : "unit_price";
-        assertEquals(price.getPrice(), body.getField(d.findFieldByName(priceField)));
+        assertEquals(price.getMid(), body.getField(d.findFieldByName(priceField)));
         assertEquals(null, d.findFieldByName(otherField));
         FieldDescriptor costBasis = d.findFieldByName("cost_basis");
         if (costBasis != null) assertFalse(body.hasField(costBasis), "cost_basis is never set");
@@ -257,7 +257,7 @@ class ProductInputBuildersTest {
     void typedRejectsAnInputTypeInputTypeForDidNotPick() throws IOException {
         JsonObject c = fixture("tips");
         ProductInput wrong = ProductInput.newBuilder()
-                .setBond(BondInput.newBuilder().setSecurity(security(c)).setCleanPrice(price(c).getPrice())).build();
+                .setBond(BondInput.newBuilder().setSecurity(security(c)).setCleanPrice(price(c).getMid())).build();
         LocalTimestampProto asof = asof(c);
         PositionProto position = position(c);
         ModelValidationException e = assertThrows(ModelValidationException.class,

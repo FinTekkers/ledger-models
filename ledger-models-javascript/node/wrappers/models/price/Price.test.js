@@ -53,7 +53,7 @@ test('Price proto has all required fields set', () => {
     expect((0, object_types_1.readVersion)(price.proto)).toEqual([0, 0, 1]);
     expect(price.proto.getUuid()).toBeTruthy();
     expect(price.proto.getAsOf()).toBeTruthy();
-    expect(price.proto.getPrice()).toBeTruthy();
+    expect(price.proto.getMid()).toBeTruthy();
     expect(price.proto.getSecurity()).toBeTruthy();
 });
 // LM-272: no as_of, or a blank time zone, is a typed input error naming the
@@ -85,6 +85,6 @@ test.each(['', '   '])('Price.getAsOf with blank time zone %j names price.as_of.
 test('Price.create with no security leaves security unset', () => {
     const price = Price_1.default.create(new decimal_js_1.Decimal('99.5'), null, datetime_1.ZonedDateTime.now());
     expect(price.proto.hasSecurity()).toBe(false);
-    expect(price.proto.getPrice()).toBeTruthy();
+    expect(price.proto.getMid()).toBeTruthy();
 });
 //# sourceMappingURL=Price.test.js.map

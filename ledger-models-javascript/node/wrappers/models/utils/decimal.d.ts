@@ -49,6 +49,14 @@ export declare function withField<T>(field: string, fn: () => T): T;
 export declare function parseDecimalString(s: string): CompactDecimal;
 /** Plain notation, never an exponent, keeping trailing zeros: unscaled 150 scale 2 is `1.50`. */
 export declare function toCanonicalString(v: CompactDecimal): string;
+/**
+ * (a + b) / 2, exact (LM-508): BigInt arithmetic on the unscaled values,
+ * never decimal.js division, whose default precision is 20 digits. The sum
+ * keeps the larger scale; an even sum is halved at that scale and an odd one
+ * is multiplied by 5 at one place more, so 99 and 101 give 100 and 99.5 and
+ * 100 give 99.75, the same in every language.
+ */
+export declare function midpoint(a: CompactDecimal, b: CompactDecimal): CompactDecimal;
 /** True when `unscaled_value` is empty. A set zero is the byte 0x00. */
 export declare function isUnsetDecimal(p: DecimalValueProto): boolean;
 /**

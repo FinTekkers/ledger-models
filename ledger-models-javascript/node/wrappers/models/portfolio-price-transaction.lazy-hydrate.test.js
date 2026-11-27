@@ -77,7 +77,7 @@ function fullPriceProto(uuid, asOf, value) {
     p.setAsOf(asOf.toProto());
     p.setIsLink(false);
     const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
-    p.setPrice(dv);
+    p.setMid(dv);
     return p;
 }
 function linkTxnProto(uuid, asOf) {

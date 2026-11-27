@@ -39,7 +39,7 @@ function linkPriceProto(securityUuid: UUID, priceValue: string): PriceProto {
   priceProto.setUuid(UUID.random().toUUIDProto());
   priceProto.setSecurity(linkSec);
   const dv = encodeDecimal(parseDecimalString(priceValue));
-  priceProto.setPrice(dv);
+  priceProto.setMid(dv);
   return priceProto;
 }
 

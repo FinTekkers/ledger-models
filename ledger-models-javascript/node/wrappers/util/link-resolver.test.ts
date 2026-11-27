@@ -112,7 +112,7 @@ function linkPrice(securityUuid: UUID, priceValue: string, asOf?: LocalTimestamp
   priceProto.setUuid(UUID.random().toUUIDProto());
   priceProto.setSecurity(linkSec);
   const dv = encodeDecimal(parseDecimalString(priceValue));
-  priceProto.setPrice(dv);
+  priceProto.setMid(dv);
   return new Price(priceProto);
 }
 
@@ -242,7 +242,7 @@ describe('LinkResolver', () => {
     priceProto.setUuid(UUID.random().toUUIDProto());
     priceProto.setSecurity(fullSec);
     const dv = encodeDecimal(parseDecimalString('100'));
-    priceProto.setPrice(dv);
+    priceProto.setMid(dv);
     const price = new Price(priceProto);
 
     await resolver.resolveSecurities([price]);
@@ -262,7 +262,7 @@ describe('LinkResolver', () => {
     priceProto.setUuid(UUID.random().toUUIDProto());
     // No security set on this price.
     const dv = encodeDecimal(parseDecimalString('100'));
-    priceProto.setPrice(dv);
+    priceProto.setMid(dv);
     const price = new Price(priceProto);
 
     await resolver.resolveSecurities([price]);

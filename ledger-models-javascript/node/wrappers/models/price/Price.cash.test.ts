@@ -19,7 +19,7 @@ function testGetCashPrice(): void {
     const cashPrice = Price.getCashPrice(cashSecurity, asOf);
 
     // Cash price should be 1.0 (Decimal normalizes to '1')
-    const priceValue = toCanonicalString(decodeDecimal(cashPrice.proto.getPrice()!));
+    const priceValue = toCanonicalString(decodeDecimal(cashPrice.proto.getMid()!));
     const priceDecimal = new Decimal(priceValue || '0');
     assert(priceDecimal.equals(new Decimal('1.0')), `Expected cash price 1.0, got ${priceValue}`);
 

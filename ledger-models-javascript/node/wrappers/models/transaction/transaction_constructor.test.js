@@ -73,7 +73,7 @@ function testTransactionConstructor() {
     assert(timeDiff < 1000, `AsOf time difference ${timeDiff}ms exceeds 1 second tolerance`);
     // getPrice() - should return PriceProto with correct price value
     const priceProto = transaction.getPrice();
-    const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(priceProto.getPrice()));
+    const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(priceProto.getMid()));
     assert(priceValue === '100.5', `Expected price '100.5', got '${priceValue}'`);
     // getSecurity() - should return Security matching input security
     assert(transaction.getSecurity().getID().toString() === security.getID().toString(), 'Security IDs should match');
@@ -229,7 +229,7 @@ test('LM-461: price_type survives the wire', () => {
 });
 test('LM-461: the price number is unchanged', () => {
     const price = trade(securityOf(product_type_pb_1.ProductTypeProto.TIPS)).proto.getPrice();
-    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getPrice()))).toBe('99.5');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getMid()))).toBe('99.5');
 });
 test('LM-461: no default and no priceType throws NoDefaultPriceTypeError naming the product', () => {
     const e = thrown(() => trade(securityOf(product_type_pb_1.ProductTypeProto.FX_SPOT)));

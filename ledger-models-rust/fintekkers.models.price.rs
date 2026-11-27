@@ -98,13 +98,22 @@ pub struct PriceProto {
     pub valid_from: ::core::option::Option<super::util::LocalTimestampProto>,
     #[prost(message, optional, tag = "9")]
     pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
-    /// Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+    /// The mid. Field 10 was named `price` before LM-508; the wire is
+    /// unchanged, so a price written then reads as a mid. Optional.
     #[prost(message, optional, tag = "10")]
-    pub price: ::core::option::Option<super::util::DecimalValueProto>,
+    pub mid: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(message, optional, tag = "11")]
     pub security: ::core::option::Option<super::security::SecurityProto>,
+    /// The unit of mid, bid and ask.
     #[prost(enumeration = "PriceTypeProto", tag = "12")]
     pub price_type: i32,
     #[prost(enumeration = "PriceSourceProto", tag = "13")]
     pub price_source: i32,
+    /// The bid: the price a buyer quotes. Optional.
+    #[prost(message, optional, tag = "14")]
+    pub bid: ::core::option::Option<super::util::DecimalValueProto>,
+    /// The ask (offer): the price a seller quotes. Optional; when bid is also
+    /// set, ask >= bid.
+    #[prost(message, optional, tag = "15")]
+    pub ask: ::core::option::Option<super::util::DecimalValueProto>,
 }

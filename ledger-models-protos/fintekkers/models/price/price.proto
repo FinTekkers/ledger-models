@@ -31,11 +31,28 @@ message PriceProto {
   util.LocalTimestampProto valid_from = 8;
   util.LocalTimestampProto valid_to = 9;
 
-  // Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
-  fintekkers.models.util.DecimalValueProto price = 10;
+  // LM-508: a price is a mid, a bid, an ask or any mix of them. All three
+  // are in price_type units. A side is set when present with a non-empty
+  // unscaled_value; zero is valid. A price is valid when at least one of
+  // mid, bid or ask is set, and, when bid and ask are both set, ask >= bid.
+  // A single price is read in this order: mid if set; else (bid + ask) / 2,
+  // exact in decimal, when both are set; else the one side that is set. The
+  // wrappers' getPrice / get_price / try_price follow this order and say
+  // which they returned (MID, DERIVED_MID, BID or ASK). See
+  // docs/adr/price_bid_ask_mid.md.
+
+  // The mid. Field 10 was named `price` before LM-508; the wire is
+  // unchanged, so a price written then reads as a mid. Optional.
+  fintekkers.models.util.DecimalValueProto mid = 10;
   fintekkers.models.security.SecurityProto security = 11;
+  // The unit of mid, bid and ask.
   PriceTypeProto price_type = 12;
   PriceSourceProto price_source = 13;
+  // The bid: the price a buyer quotes. Optional.
+  fintekkers.models.util.DecimalValueProto bid = 14;
+  // The ask (offer): the price a seller quotes. Optional; when bid is also
+  // set, ask >= bid.
+  fintekkers.models.util.DecimalValueProto ask = 15;
 
   /*
   TODO: Price types:

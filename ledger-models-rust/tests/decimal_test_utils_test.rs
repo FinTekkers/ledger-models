@@ -92,7 +92,7 @@ fn full_security() -> SecurityProto {
 /// Every decimal field of `CurveRequestProto` set, with two inputs. Counted
 /// from curve_request.proto, price.proto and security.proto:
 /// - curve_inputs[i].security is a bond                                   2
-/// - curve_inputs[i].price.price                                          1
+/// - curve_inputs[i].price.mid                                            1
 /// - curve_inputs[i].price.security: bond_details.face_value              1
 /// - curve_inputs[i].tenor                                                1
 /// - curve_inputs[i].clean_price                                          1
@@ -107,7 +107,7 @@ fn full_curve_request() -> CurveRequestProto {
     let mut input = || CurveInputProto {
         security: Some(bond(d)),
         price: Some(PriceProto {
-            price: d.next(),
+            mid: d.next(),
             security: Some(SecurityProto {
                 bond_details: Some(BondDetailsProto { face_value: d.next(), ..Default::default() }),
                 ..Default::default()
@@ -147,7 +147,7 @@ fn finds_every_decimal_in_curve_request() {
     let found = find_decimals(&full_curve_request());
     assert_eq!(found.len(), CURVE_REQUEST_DECIMALS, "{:#?}", paths(&found));
     let paths = paths(&found);
-    for expected in ["curve_inputs[1].tenor", "curve_inputs[0].price.price", "tenor_points[2]"] {
+    for expected in ["curve_inputs[1].tenor", "curve_inputs[0].price.mid", "tenor_points[2]"] {
         assert!(paths.contains(&expected), "{} not in {:#?}", expected, paths);
     }
 }

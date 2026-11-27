@@ -21,7 +21,7 @@ function testGetCashPrice() {
     const asOf = datetime_1.ZonedDateTime.now();
     const cashPrice = Price_1.default.getCashPrice(cashSecurity, asOf);
     // Cash price should be 1.0 (Decimal normalizes to '1')
-    const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(cashPrice.proto.getPrice()));
+    const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(cashPrice.proto.getMid()));
     const priceDecimal = new decimal_js_1.Decimal(priceValue || '0');
     assert(priceDecimal.equals(new decimal_js_1.Decimal('1.0')), `Expected cash price 1.0, got ${priceValue}`);
     // Security should match

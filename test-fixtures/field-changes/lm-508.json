@@ -1,0 +1,10 @@
+{
+  "item": "LM-508",
+  "renamed": [
+    {"message": ".fintekkers.models.price.PriceProto", "number": 10, "type": ".fintekkers.models.util.DecimalValueProto", "old_name": "price", "new_name": "mid"}
+  ],
+  "added": [
+    {"message": ".fintekkers.models.price.PriceProto", "number": 14, "name": "bid", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.models.price.PriceProto", "number": 15, "name": "ask", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ]
+}

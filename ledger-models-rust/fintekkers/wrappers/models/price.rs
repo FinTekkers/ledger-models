@@ -10,7 +10,8 @@ use crate::fintekkers::requests::util::errors::{ErrorProto, Message as ErrorMess
 
 use crate::fintekkers::wrappers::models::security::{SecurityProtoBuilder, SecurityWrapper};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
-use crate::fintekkers::wrappers::models::utils::decimal::{is_unset_decimal, DecimalWrapper};
+use crate::fintekkers::wrappers::models::utils::decimal::{decode_decimal, encode_decimal, is_unset_decimal, midpoint, CompactDecimal, DecimalWrapper};
+use crate::fintekkers::models::util::DecimalValueProto;
 use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 use chrono::DateTime;
@@ -24,6 +25,24 @@ use crate::fintekkers::wrappers::util::object_types;
 use prost::Message;
 use crate::fintekkers::wrappers::models::raw_datamodel_object::RawDataModelObject;
 use crate::raw_data_model_object_trait;
+
+/// LM-508: which side of the market [`PriceWrapper::try_price`] returned.
+/// Wrapper only; the proto has no enum for it. See
+/// docs/adr/price_bid_ask_mid.md.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum PriceKind {
+    Mid,
+    DerivedMid,
+    Bid,
+    Ask,
+}
+
+/// The one number a price resolves to, and which kind it is.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PriceQuote {
+    pub value: Decimal,
+    pub kind: PriceKind,
+}
 
 #[derive(Default, Debug)]
 pub struct PriceWrapper {
@@ -117,18 +136,76 @@ impl PriceWrapper {
         ProtoSerializationUtil::deserialize_required_timestamp(self.proto.as_of.as_ref(), "price.as_of")
     }
 
-    /// The price value. Unset, malformed or not exactly representable is
-    /// `Error::Validation` naming `price`.
+    /// The one number this price resolves to: mid if set; else the exact
+    /// bid/ask midpoint when both are set; else the one side that is set.
+    /// None set is `Error::Validation` naming `mid`; a malformed side, or a
+    /// value Rust `Decimal` cannot hold exactly, names its field. For new code
+    /// prefer [`Self::try_price_quote`], which also says which kind it is.
     pub fn try_price(&self) -> Result<Decimal, Error> {
+        self.try_price_quote().map(|q| q.value)
+    }
+
+    /// The kind [`Self::try_price`] returned (Mid, DerivedMid, Bid or Ask).
+    pub fn try_price_kind(&self) -> Result<PriceKind, Error> {
+        self.try_price_quote().map(|q| q.kind)
+    }
+
+    /// The resolved value and its kind. Errors as [`Self::try_price`].
+    pub fn try_price_quote(&self) -> Result<PriceQuote, Error> {
+        let mid = self.side(MID_FIELD)?;
+        let bid = self.side(BID_FIELD)?;
+        let ask = self.side(ASK_FIELD)?;
+        let (value, kind, field) = match (mid, bid, ask) {
+            (Some(mid), _, _) => (mid, PriceKind::Mid, MID_FIELD),
+            (None, Some(bid), Some(ask)) => (midpoint(&bid, &ask), PriceKind::DerivedMid, MID_FIELD),
+            (None, Some(bid), None) => (bid, PriceKind::Bid, BID_FIELD),
+            (None, None, Some(ask)) => (ask, PriceKind::Ask, ASK_FIELD),
+            (None, None, None) => {
+                return Err(Error::Validation(vec![FieldViolationProto {
+                    field: MID_FIELD.to_string(),
+                    object_id: object_id_of(self.proto.uuid.as_ref()),
+                    message: "one of mid, bid or ask is required".to_string(),
+                }]))
+            }
+        };
+        let value = value.to_rust_decimal().map_err(|e| e.in_field(field))?;
+        Ok(PriceQuote { value, kind })
+    }
+
+    /// The raw mid; `Ok(None)` when unset.
+    pub fn try_mid(&self) -> Result<Option<Decimal>, Error> {
+        self.side_decimal(MID_FIELD)
+    }
+
+    /// The raw bid; `Ok(None)` when unset.
+    pub fn try_bid(&self) -> Result<Option<Decimal>, Error> {
+        self.side_decimal(BID_FIELD)
+    }
+
+    /// The raw ask; `Ok(None)` when unset.
+    pub fn try_ask(&self) -> Result<Option<Decimal>, Error> {
+        self.side_decimal(ASK_FIELD)
+    }
+
+    fn side_decimal(&self, field: &str) -> Result<Option<Decimal>, Error> {
+        self.side(field)?
+            .map(|v| v.to_rust_decimal().map_err(|e| e.in_field(field)))
+            .transpose()
+    }
+
+    /// One side, exact; `Ok(None)` when absent or unset.
+    fn side(&self, field: &str) -> Result<Option<CompactDecimal>, Error> {
         self.ensure_hydrated();
-        let price = self.active().price.as_ref().ok_or_else(|| {
-            Error::Validation(vec![FieldViolationProto {
-                field: PRICE_FIELD.to_string(),
-                object_id: object_id_of(self.proto.uuid.as_ref()),
-                message: "price is required but unset".to_string(),
-            }])
-        })?;
-        ProtoSerializationUtil::deserialize_decimal(price).map_err(|e| e.in_field(PRICE_FIELD))
+        let proto = self.active();
+        let value = match field {
+            MID_FIELD => proto.mid.as_ref(),
+            BID_FIELD => proto.bid.as_ref(),
+            _ => proto.ask.as_ref(),
+        };
+        match value {
+            Some(v) if !is_unset_decimal(v) => decode_decimal(v).map(Some).map_err(|e| e.in_field(field)),
+            _ => Ok(None),
+        }
     }
 
     pub fn security_wrapper(&self) -> SecurityWrapper {
@@ -162,16 +239,23 @@ impl Eq for PriceWrapper {}
 // ---------- Price input rules (LM-289) ----------
 
 pub const SECURITY_FIELD: &str = "security";
-pub const PRICE_FIELD: &str = "price";
+/// LM-508: field 10, named `price` before.
+pub const MID_FIELD: &str = "mid";
+pub const BID_FIELD: &str = "bid";
+pub const ASK_FIELD: &str = "ask";
+#[deprecated(note = "LM-508 renamed field 10 to `mid`; use MID_FIELD")]
+pub const PRICE_FIELD: &str = MID_FIELD;
 pub const PRICE_TYPE_FIELD: &str = "price_type";
 
 /// Price input rules: Rust counterpart of Java's PriceRules
 /// (docs/adr/typed-input-errors.md). Returns every field-level violation, or
-/// an empty Vec when valid. Three rules, in this order: `security` has a
-/// non-empty UUID, `price` has either decimal form set (zero is valid, see
-/// the PriceProto comment), and `price_type` is not
-/// UNKNOWN_PRICE_TYPE. The price value is not parsed. A link price is not
-/// skipped: hydrate it first. `PriceWrapper::new` does not call this.
+/// an empty Vec when valid. Rules, in this order: `security` has a non-empty
+/// UUID; at least one of mid, bid and ask is set (zero is valid, see the
+/// PriceProto comment), else a violation on `mid`; when bid and ask are both
+/// set, ask >= bid, else a violation on `ask` (LM-508); and `price_type` is
+/// not UNKNOWN_PRICE_TYPE. Only bid and ask are parsed, for the comparison;
+/// an unreadable one skips it. A link price is not skipped: hydrate it
+/// first. `PriceWrapper::new` does not call this.
 pub fn validate_price(proto: &PriceProto) -> Vec<FieldViolationProto> {
     let id = object_id_of(proto.uuid.as_ref());
     let violation = |field: &str, message: &str| FieldViolationProto {
@@ -184,14 +268,53 @@ pub fn validate_price(proto: &PriceProto) -> Vec<FieldViolationProto> {
     if security_uuid.map_or(true, |u| u.raw_uuid.is_empty()) {
         out.push(violation(SECURITY_FIELD, "security with a non-empty uuid is required"));
     }
-    if proto.price.as_ref().map_or(true, is_unset_decimal) {
-        out.push(violation(PRICE_FIELD, "price is required"));
+    let set = |v: &Option<DecimalValueProto>| v.as_ref().filter(|d| !is_unset_decimal(d)).cloned();
+    let (mid, bid, ask) = (set(&proto.mid), set(&proto.bid), set(&proto.ask));
+    if mid.is_none() && bid.is_none() && ask.is_none() {
+        out.push(violation(MID_FIELD, "one of mid, bid or ask is required"));
+    }
+    if let (Some(bid), Some(ask)) = (bid, ask) {
+        if is_below(&ask, &bid) {
+            out.push(violation(ASK_FIELD, "ask must not be less than bid"));
+        }
     }
     // Raw number, so an unrecognised value is not rejected.
     if proto.price_type == PriceTypeProto::UnknownPriceType as i32 {
         out.push(violation(PRICE_TYPE_FIELD, "price_type must not be UNKNOWN_PRICE_TYPE"));
     }
     out
+}
+
+/// LM-508: the decimal a price resolves to, read from the proto as given (a
+/// link is not hydrated): mid, bid or ask as is, or the exact bid/ask
+/// midpoint as a new decimal. `Ok(None)` when none is set; a malformed bid
+/// or ask behind a midpoint is `Error::Validation` naming it. Same order as
+/// [`PriceWrapper::try_price`]; for pricer inputs and other proto-level
+/// readers.
+pub fn resolved_price_decimal(proto: &PriceProto) -> Result<Option<DecimalValueProto>, Error> {
+    let set = |v: &Option<DecimalValueProto>| v.as_ref().filter(|d| !is_unset_decimal(d)).cloned();
+    Ok(match (set(&proto.mid), set(&proto.bid), set(&proto.ask)) {
+        (Some(mid), _, _) => Some(mid),
+        (None, Some(bid), Some(ask)) => {
+            let bid = decode_decimal(&bid).map_err(|e| e.in_field(BID_FIELD))?;
+            let ask = decode_decimal(&ask).map_err(|e| e.in_field(ASK_FIELD))?;
+            Some(encode_decimal(&midpoint(&bid, &ask)))
+        }
+        (None, bid, ask) => bid.or(ask),
+    })
+}
+
+/// True when ask < bid; false when either is unreadable, so validation never
+/// fails on it.
+fn is_below(ask: &DecimalValueProto, bid: &DecimalValueProto) -> bool {
+    match (decode_decimal(ask), decode_decimal(bid)) {
+        (Ok(a), Ok(b)) => {
+            let scale = a.scale.max(b.scale);
+            let ten = num_bigint::BigInt::from(10);
+            a.unscaled * ten.pow(scale - a.scale) < b.unscaled * ten.pow(scale - b.scale)
+        }
+        _ => false,
+    }
 }
 
 /// `Err(Error::Validation(..))` carrying every violation if
@@ -214,8 +337,9 @@ pub fn is_market_price(proto: &PriceProto) -> bool {
         || proto.price_source == PriceSourceProto::Market as i32
 }
 
-/// Required-field rules only (LM-290): `security` and `price`, the same
-/// rules as [`validate_price`] minus `price_type`. Returns one `ErrorProto`
+/// Required-field rules only (LM-290): `security` and one of mid / bid / ask
+/// (LM-508: reported on `mid`), the same rules as [`validate_price`] minus
+/// `price_type` and the ask >= bid check. Returns one `ErrorProto`
 /// per failed rule, or an empty Vec when valid. Zero and negative prices are
 /// valid; the value is not parsed.
 ///
@@ -228,7 +352,7 @@ pub fn is_market_price(proto: &PriceProto) -> bool {
 pub fn validate_price_required_fields(proto: &PriceProto) -> Vec<ErrorProto> {
     validate_price(proto)
         .into_iter()
-        .filter(|v| v.field == PRICE_FIELD || v.field == SECURITY_FIELD)
+        .filter(|v| v.field == MID_FIELD || v.field == SECURITY_FIELD)
         .map(|v| ErrorProto {
             detail: Some(ErrorMessage {
                 message_for_user: v.message.clone(),
@@ -249,7 +373,9 @@ pub struct PriceProtoBuilder {
 
     uuid: UUIDWrapper,
     security: Option<SecurityProto>,
-    price: Option<DecimalWrapper>,
+    mid: Option<DecimalWrapper>,
+    bid: Option<DecimalWrapper>,
+    ask: Option<DecimalWrapper>,
     price_type: PriceTypeProto,
 }
 
@@ -264,7 +390,9 @@ impl PriceProtoBuilder {
 
             uuid: UUIDWrapper::new_random(),
             security: None,
-            price: None,
+            mid: None,
+            bid: None,
+            ask: None,
             price_type: PriceTypeProto::UnknownPriceType,
         }
     }
@@ -299,8 +427,26 @@ impl PriceProtoBuilder {
         self
     }
 
-    pub fn price(mut self, price: DecimalWrapper) -> Self {
-        self.price = price.into();
+    /// Sets the mid (LM-508: field 10 is now named `mid`); same as [`Self::mid`].
+    pub fn price(self, price: DecimalWrapper) -> Self {
+        self.mid(price)
+    }
+
+    /// Sets the mid.
+    pub fn mid(mut self, mid: DecimalWrapper) -> Self {
+        self.mid = Some(mid);
+        self
+    }
+
+    /// Sets the bid.
+    pub fn bid(mut self, bid: DecimalWrapper) -> Self {
+        self.bid = Some(bid);
+        self
+    }
+
+    /// Sets the ask.
+    pub fn ask(mut self, ask: DecimalWrapper) -> Self {
+        self.ask = Some(ask);
         self
     }
 
@@ -316,7 +462,17 @@ impl PriceProtoBuilder {
     /// Builds the price. With no `.security(..)` the proto has no `security`
     /// (LM-449): an inline trade price need not name one, so this is not a
     /// standalone price and `validate_price` still reports the missing field.
+    /// LM-508: any mix of mid, bid and ask; none of them is
+    /// `Error::Validation` naming `mid`. Ask >= bid is not checked here: see
+    /// [`validate_price`].
     pub fn build(self) -> Result<PriceProto, Error> {
+        if self.mid.is_none() && self.bid.is_none() && self.ask.is_none() {
+            return Err(Error::Validation(vec![FieldViolationProto {
+                field: MID_FIELD.to_string(),
+                object_id: None,
+                message: "one of mid, bid or ask is required".to_string(),
+            }]));
+        }
         let valid_to = match self.valid_to {
             Some(..) => Some(self.valid_to.unwrap().proto),
             None => None
@@ -330,7 +486,9 @@ impl PriceProtoBuilder {
             is_link: self.is_link,
 
             uuid: Some(self.uuid.into()),
-            price: Some(self.price.unwrap().into()),
+            mid: self.mid.map(Into::into),
+            bid: self.bid.map(Into::into),
+            ask: self.ask.map(Into::into),
             security: self.security,
             price_type: self.price_type as i32,
             ..Default::default()
@@ -399,7 +557,7 @@ mod test {
             .dummy_price_wrapper(number)
             .proto;
 
-        let price = price_proto.price.unwrap();
+        let price = price_proto.mid.unwrap();
         let price_str = decode_decimal(&price).unwrap().to_string();
 
         assert_eq!(price_str, number.to_string());
@@ -411,7 +569,7 @@ mod test {
     #[test]
     fn build_without_security_has_no_security() {
         let proto = PriceProtoBuilder::new()
-            .price(super::DecimalWrapper::from(dec!(99.5)))
+            .mid(super::DecimalWrapper::from(dec!(99.5)))
             .build()
             .unwrap();
         assert!(proto.security.is_none());
@@ -455,7 +613,7 @@ mod test {
             uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
             as_of: Some(as_of),
             is_link: false,
-            price: Some(decimal_proto_str(value)),
+            mid: Some(decimal_proto_str(value)),
             security: Some(SecurityProto { is_link: false, ..Default::default() }),
             ..Default::default()
         }
@@ -505,7 +663,7 @@ mod test {
                 uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
                 ..Default::default()
             }),
-            price: Some(decimal_proto_str("100.25")),
+            mid: Some(decimal_proto_str("100.25")),
             price_type: PriceTypeProto::Percentage as i32,
             ..Default::default()
         }
@@ -537,23 +695,23 @@ mod test {
     }
 
     #[test]
-    fn rules_price_absent_one_violation_on_price() {
+    fn rules_mid_absent_one_violation_on_mid() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = None;
-        assert_eq!(rules_fields(&p), vec!["price"]);
+        p.mid = None;
+        assert_eq!(rules_fields(&p), vec!["mid"]);
     }
 
     #[test]
-    fn rules_price_empty_one_violation_on_price() {
+    fn rules_mid_empty_one_violation_on_mid() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(DecimalValueProto::default());
-        assert_eq!(rules_fields(&p), vec!["price"]);
+        p.mid = Some(DecimalValueProto::default());
+        assert_eq!(rules_fields(&p), vec!["mid"]);
     }
 
     #[test]
     fn rules_price_zero_is_valid() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(decimal_proto_str("0"));
+        p.mid = Some(decimal_proto_str("0"));
         assert!(rules_fields(&p).is_empty());
     }
 
@@ -562,7 +720,7 @@ mod test {
         let over_cap = DecimalValueProto { unscaled_value: vec![0x01], scale: 4097 };
         for value in [decimal_proto_str("-1"), over_cap] {
             let mut p = rules_valid(Uuid::new_v4());
-            p.price = Some(value.clone());
+            p.mid = Some(value.clone());
             assert!(rules_fields(&p).is_empty(), "{:?}", value);
         }
     }
@@ -586,11 +744,11 @@ mod test {
         let price_id = Uuid::new_v4();
         let mut p = rules_valid(price_id);
         p.security = None;
-        p.price = None;
+        p.mid = None;
         p.price_type = PriceTypeProto::UnknownPriceType as i32;
         let violations = validate_price(&p);
         let fields: Vec<&str> = violations.iter().map(|v| v.field.as_str()).collect();
-        assert_eq!(fields, vec!["security", "price", "price_type"]);
+        assert_eq!(fields, vec!["security", "mid", "price_type"]);
         for v in &violations {
             assert_eq!(v.object_id.as_ref().unwrap().raw_uuid, price_id.as_bytes().to_vec());
         }
@@ -615,14 +773,14 @@ mod test {
     fn rules_empty_proto_three_violations() {
         let violations = validate_price(&PriceProto::default());
         let fields: Vec<&str> = violations.iter().map(|v| v.field.as_str()).collect();
-        assert_eq!(fields, vec!["security", "price", "price_type"]);
+        assert_eq!(fields, vec!["security", "mid", "price_type"]);
         assert!(violations[0].object_id.is_none());
     }
 
     #[test]
     fn rules_require_valid_returns_validation_error_carrying_violations() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = None;
+        p.mid = None;
         let err = require_valid_price(&p).unwrap_err();
         assert!(matches!(err, Error::Validation(_)), "expected Error::Validation, got {:?}", err);
         assert_eq!(err.violations(), validate_price(&p).as_slice());
@@ -644,21 +802,21 @@ mod test {
     fn required_valid_values_have_no_errors() {
         for value in ["1.5", "0", "-1"] {
             let mut p = rules_valid(Uuid::new_v4());
-            p.price = Some(decimal_proto_str(value));
+            p.mid = Some(decimal_proto_str(value));
             assert!(validate_price_required_fields(&p).is_empty(), "{}", value);
         }
     }
 
     #[test]
-    fn required_price_missing_one_error_naming_price() {
+    fn required_mid_missing_one_error_naming_mid() {
         let mut unset = rules_valid(Uuid::new_v4());
-        unset.price = None;
+        unset.mid = None;
         let mut empty = rules_valid(Uuid::new_v4());
-        empty.price = Some(DecimalValueProto::default());
+        empty.mid = Some(DecimalValueProto::default());
         for p in [unset, empty] {
             let messages = required_messages(&validate_price_required_fields(&p));
             assert_eq!(messages.len(), 1, "{:?}", messages);
-            assert!(messages[0].contains("price"), "{}", messages[0]);
+            assert!(messages[0].contains("mid"), "{}", messages[0]);
             assert!(!messages[0].contains("security"), "{}", messages[0]);
         }
     }
@@ -676,10 +834,10 @@ mod test {
         }
     }
 
-    fn assert_names_price_and_security(errors: &[ErrorProto]) {
+    fn assert_names_mid_and_security(errors: &[ErrorProto]) {
         let messages = required_messages(errors);
         assert_eq!(messages.len(), 2, "{:?}", messages);
-        assert!(messages.iter().any(|m| m.contains("price") && !m.contains("security")), "{:?}", messages);
+        assert!(messages.iter().any(|m| m.contains("mid") && !m.contains("security")), "{:?}", messages);
         assert!(messages.iter().any(|m| m.contains("security")), "{:?}", messages);
         assert!(messages.iter().all(|m| !m.contains("price_type")), "{:?}", messages);
     }
@@ -687,16 +845,16 @@ mod test {
     #[test]
     fn required_both_missing_two_errors() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = None;
+        p.mid = None;
         p.security = None;
-        assert_names_price_and_security(&validate_price_required_fields(&p));
+        assert_names_mid_and_security(&validate_price_required_fields(&p));
     }
 
     #[test]
     fn required_all_unset_default_proto() {
         // validate_price returns three violations here; price_type must be filtered out.
         assert_eq!(validate_price(&PriceProto::default()).len(), 3);
-        assert_names_price_and_security(&validate_price_required_fields(&PriceProto::default()));
+        assert_names_mid_and_security(&validate_price_required_fields(&PriceProto::default()));
     }
 
     #[test]
@@ -714,7 +872,7 @@ mod test {
     #[test]
     fn compact_only_price_passes_and_both_forms_empty_fails() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(DecimalValueProto {
+        p.mid = Some(DecimalValueProto {
             unscaled_value: vec![0x00],
             scale: 0,
             ..Default::default()
@@ -722,35 +880,35 @@ mod test {
         assert!(validate_price_required_fields(&p).is_empty());
         assert!(require_valid_price(&p).is_ok());
 
-        p.price = Some(DecimalValueProto::default());
+        p.mid = Some(DecimalValueProto::default());
         let errors = validate_price_required_fields(&p);
         assert_eq!(errors.len(), 1);
-        assert_eq!(errors[0].violations[0].field, "price");
+        assert_eq!(errors[0].violations[0].field, "mid");
     }
 
     #[test]
     fn try_price_reads_a_decimal_built_from_a_string() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(decimal_proto_str("1.50"));
+        p.mid = Some(decimal_proto_str("1.50"));
         let value = PriceWrapper::new(p).try_price().unwrap();
         assert_eq!(value.to_string(), "1.50");
     }
 
     #[test]
-    fn try_price_errors_name_price() {
+    fn try_price_errors_name_mid() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(DecimalValueProto { unscaled_value: vec![0x01], scale: 4097 });
+        p.mid = Some(DecimalValueProto { unscaled_value: vec![0x01], scale: 4097 });
         let err = PriceWrapper::new(p.clone()).try_price().unwrap_err();
-        assert_eq!(err.violations()[0].field, "price");
-        p.price = None;
+        assert_eq!(err.violations()[0].field, "mid");
+        p.mid = None;
         let err = PriceWrapper::new(p).try_price().unwrap_err();
-        assert_eq!(err.violations()[0].field, "price");
+        assert_eq!(err.violations()[0].field, "mid");
     }
 
     #[test]
     fn try_price_reads_compact_form() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(decimal_proto(&Decimal::new(-12345, 2)));
+        p.mid = Some(decimal_proto(&Decimal::new(-12345, 2)));
         assert_eq!(PriceWrapper::new(p).try_price().unwrap(), Decimal::new(-12345, 2));
     }
 }

@@ -12,7 +12,7 @@ import type { DecimalValueProto } from "../../../fintekkers/models/util/decimal_
 
 import Security from "../security/security";
 import Portfolio from "../portfolio/portfolio";
-import Price from "../price/Price";
+import Price, { resolvedPriceDecimal } from "../price/Price";
 import { resolveTradePriceType } from "../security/default_price_types";
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 
@@ -430,7 +430,7 @@ class Transaction {
         if (!faceValue) throw new Error("Face value is required for bond cash impact calculation");
 
         const priceProto = parentTransaction.getPrice();
-        const priceValue = priceOrZero(priceProto.getPrice());
+        const priceValue = priceOrZero(resolvedPriceDecimal(priceProto));
         const scaledPrice = priceValue.mul(priceScaleFactor);
 
         const quantity = parentTransaction.getQuantity();
@@ -441,7 +441,7 @@ class Transaction {
     } else {
       // For other securities: quantity * price
       const priceProto = parentTransaction.getPrice();
-      const priceValue = priceOrZero(priceProto.getPrice());
+      const priceValue = priceOrZero(resolvedPriceDecimal(priceProto));
       bookAmount = parentTransaction.getQuantity().mul(priceValue);
     }
 
@@ -500,7 +500,7 @@ class Transaction {
 
     // Get price as Decimal
     const priceProto = transaction.getPrice();
-    const priceValue = priceOrZero(priceProto.getPrice());
+    const priceValue = priceOrZero(resolvedPriceDecimal(priceProto));
 
     // Get asOf ZonedDateTime
     const asOf = transaction.getAsOf();
@@ -584,7 +584,7 @@ class Transaction {
  */
 function priceOrZero(p: DecimalValueProto | undefined): Decimal {
   if (!p || isUnsetDecimal(p)) return new Decimal(0);
-  return toDecimalJs(withField('price.price', () => decodeDecimal(p)));
+  return toDecimalJs(withField('price', () => decodeDecimal(p)));
 }
 
 export default Transaction;

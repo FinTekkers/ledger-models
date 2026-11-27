@@ -241,6 +241,7 @@ const BUILDERS = [
     B('Identifier.fromName', T.OBJECT_TYPE_IDENTIFIER, () => identifier_1.Identifier.fromName('ISIN', 'US0378331005')),
     B('Price.fromSimple', T.OBJECT_TYPE_PRICE, () => Price_1.default.fromSimple(uuid_1.UUID.random().toString(), 1, new Date())),
     B('Price.create', T.OBJECT_TYPE_PRICE, (c) => Price_1.default.create(new decimal_js_1.Decimal(1), security(c), datetime_1.ZonedDateTime.now())),
+    B('Price.createQuote', T.OBJECT_TYPE_PRICE, (c) => Price_1.default.createQuote({ bid: new decimal_js_1.Decimal(99), ask: new decimal_js_1.Decimal(101) }, security(c), datetime_1.ZonedDateTime.now())),
     B('Price.getCashPrice', T.OBJECT_TYPE_PRICE, (c) => Price_1.default.getCashPrice(security(c), datetime_1.ZonedDateTime.now())),
     B('PositionFilter.toProto', T.OBJECT_TYPE_POSITION_FILTER, () => filter().toProto()),
     B('QueryPositionRequest.toProto', T.OBJECT_TYPE_QUERY_POSITION_REQUEST, () => new QueryPositionRequest_1.QueryPositionRequest(filter(), position_pb_1.PositionTypeProto.TRANSACTION, position_pb_1.PositionViewProto.DEFAULT_VIEW, [], [], datetime_1.ZonedDateTime.now()).toProto()),

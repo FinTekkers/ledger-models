@@ -220,6 +220,25 @@ pub fn encode_decimal(v: &CompactDecimal) -> DecimalValueProto {
     }
 }
 
+/// (a + b) / 2, exact (LM-508): integer arithmetic on the unscaled values,
+/// never `rust_decimal` arithmetic, which rounds past 28 places. The sum
+/// keeps the larger scale; an even sum is halved at that scale and an odd one
+/// is multiplied by 5 at one place more, so 99 and 101 give 100 and 99.5 and
+/// 100 give 99.75, the same in every language. Convert with
+/// `to_rust_decimal`, which fails rather than rounds when the result needs
+/// more than 28 places.
+pub fn midpoint(a: &CompactDecimal, b: &CompactDecimal) -> CompactDecimal {
+    let scale = a.scale.max(b.scale);
+    let ten = BigInt::from(10);
+    let total = &a.unscaled * ten.pow(scale - a.scale) + &b.unscaled * ten.pow(scale - b.scale);
+    let two = BigInt::from(2);
+    if (&total % &two).sign() == Sign::NoSign {
+        CompactDecimal { unscaled: total / two, scale }
+    } else {
+        CompactDecimal { unscaled: total * 5, scale: scale + 1 }
+    }
+}
+
 /// A `DecimalValueProto` holding `d`.
 pub fn decimal_proto(d: &Decimal) -> DecimalValueProto {
     encode_decimal(&CompactDecimal::from(d))

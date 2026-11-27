@@ -1,10 +1,12 @@
 """Price input rules (LM-289): Python counterpart of Java's PriceRules
 (docs/adr/typed-input-errors.md). Pure: proto in, violations out.
 
-Three rules, checked in this order: `security` has a non-empty UUID, `price`
-has a non-empty unscaled_value (zero is valid, see the PriceProto
-comment), and `price_type` is not UNKNOWN_PRICE_TYPE. The price value is not
-parsed. Never raises on bad or unset input; None is checked as an empty
+Rules, checked in this order: `security` has a non-empty UUID; at least one
+of mid, bid and ask has a non-empty unscaled_value (zero is valid, see the
+PriceProto comment), else a violation on `mid`; when bid and ask are both
+set, ask >= bid, else a violation on `ask` (LM-508); and `price_type` is not
+UNKNOWN_PRICE_TYPE. Only bid and ask are parsed, for the comparison; an
+unreadable one skips it. Never raises on bad or unset input; None is checked as an empty
 PriceProto. Unlike security_rules, a link price is not skipped: hydrate it
 first. The Price wrapper does not call these rules.
 """
@@ -15,12 +17,18 @@ from uuid import UUID
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.price.price_source_pb2 import PriceSourceProto
 from fintekkers.models.price.price_type_pb2 import PriceTypeProto
+from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.requests.util.errors.field_violation_pb2 import FieldViolationProto
 from fintekkers.wrappers.models.errors import ModelValidationError, violation
-from fintekkers.wrappers.models.util.decimal import is_decimal_set
+from fintekkers.wrappers.models.util.decimal import decode_decimal, is_decimal_set
 
 SECURITY = "security"
-PRICE = "price"
+# LM-508: field 10, named `price` before.
+MID = "mid"
+BID = "bid"
+ASK = "ask"
+# Deprecated alias: LM-508 renamed field 10 to `mid`. Use MID.
+PRICE = MID
 PRICE_TYPE = "price_type"
 
 
@@ -32,8 +40,11 @@ def validate(proto: Optional[PriceProto]) -> list[FieldViolationProto]:
     out: list[FieldViolationProto] = []
     if not p.HasField("security") or not p.security.HasField("uuid") or not p.security.uuid.raw_uuid:
         out.append(violation(SECURITY, object_id, "security with a non-empty uuid is required"))
-    if not p.HasField("price") or not is_decimal_set(p.price):
-        out.append(violation(PRICE, object_id, "price is required"))
+    has_mid, has_bid, has_ask = (p.HasField(f) and is_decimal_set(getattr(p, f)) for f in (MID, BID, ASK))
+    if not (has_mid or has_bid or has_ask):
+        out.append(violation(MID, object_id, "one of mid, bid or ask is required"))
+    if has_bid and has_ask and _is_below(p.ask, p.bid):
+        out.append(violation(ASK, object_id, "ask must not be less than bid"))
     if p.price_type == PriceTypeProto.UNKNOWN_PRICE_TYPE:
         out.append(violation(PRICE_TYPE, object_id, "price_type must not be UNKNOWN_PRICE_TYPE"))
     return out
@@ -53,6 +64,14 @@ def is_market_price(proto: Optional[PriceProto]) -> bool:
     docs/adr/price_source.md."""
     p = proto if proto is not None else PriceProto()
     return p.price_source in (PriceSourceProto.UNKNOWN_PRICE_SOURCE, PriceSourceProto.MARKET)
+
+
+def _is_below(ask: DecimalValueProto, bid: DecimalValueProto) -> bool:
+    """True when ask < bid; False when either is unreadable, so validate never raises."""
+    try:
+        return decode_decimal(ask) < decode_decimal(bid)
+    except ModelValidationError:
+        return False
 
 
 def _object_id_of(proto: PriceProto) -> Optional[UUID]:

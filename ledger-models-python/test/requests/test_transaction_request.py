@@ -24,7 +24,7 @@ def test_create_transaction_request():
     assert proto.create_transaction_input.position_status == PositionStatusProto.HYPOTHETICAL
     assert proto.create_transaction_input.transaction_type == TransactionTypeProto.SELL
     assert format(decode_decimal(proto.create_transaction_input.quantity), "f") == "1"
-    assert format(decode_decimal(proto.create_transaction_input.price.price), "f") == "50.0"
+    assert format(decode_decimal(proto.create_transaction_input.price.mid), "f") == "50.0"
     
 
 def test_query_transaction_request():

@@ -45,10 +45,10 @@ export class PriceProto extends jspb.Message {
     getValidTo(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
     setValidTo(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): PriceProto;
 
-    hasPrice(): boolean;
-    clearPrice(): void;
-    getPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): PriceProto;
+    hasMid(): boolean;
+    clearMid(): void;
+    getMid(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setMid(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): PriceProto;
 
     hasSecurity(): boolean;
     clearSecurity(): void;
@@ -58,6 +58,16 @@ export class PriceProto extends jspb.Message {
     setPriceType(value: fintekkers_models_price_price_type_pb.PriceTypeProto): PriceProto;
     getPriceSource(): fintekkers_models_price_price_source_pb.PriceSourceProto;
     setPriceSource(value: fintekkers_models_price_price_source_pb.PriceSourceProto): PriceProto;
+
+    hasBid(): boolean;
+    clearBid(): void;
+    getBid(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setBid(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): PriceProto;
+
+    hasAsk(): boolean;
+    clearAsk(): void;
+    getAsk(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setAsk(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): PriceProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): PriceProto.AsObject;
@@ -78,9 +88,11 @@ export namespace PriceProto {
         isLink: boolean,
         validFrom?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
-        price?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        mid?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         priceType: fintekkers_models_price_price_type_pb.PriceTypeProto,
         priceSource: fintekkers_models_price_price_source_pb.PriceSourceProto,
+        bid?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        ask?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }

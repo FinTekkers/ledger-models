@@ -1,0 +1,32 @@
+{
+  "description": "LM-508: PriceProto bid / ask / mid. Shared by the Java PriceBidAskTest, Python test_price_bid_ask, JS Price.bidAsk.test and Rust price_bid_ask_test. Decimal values are canonical plain strings: no exponent, trailing zeros kept, e.g. 100.0 not 1E+2. Compare them with Java toPlainString(), Python format(d, 'f'), JS toCanonicalString / Decimal.toFixed() and Rust Decimal::to_string(). An absent mid / bid / ask key means the field is unset. kind is the wrapper-only PriceKind: MID, DERIVED_MID, BID or ASK.",
+  "legacy": {
+    "source": "PriceProto bytes written by the release before LM-508 (main at c020a98949e7b79a48d7b8a87ed19b464a2b87d8, ledger-models-python price_pb2): stamp(PriceProto(uuid, as_of, price=99.5, security, price_type=PERCENTAGE), OBJECT_TYPE_PRICE).SerializeToString().hex(). Field 10 was named price then. Never regenerate this from the current bindings.",
+    "hex": "080b120218012a120a1050850000000040008000000000000001321a0a060880e2cfaa061210416d65726963612f4e65775f596f726b52065a0203e360015a142a120a10508500000000400080000000000000026002",
+    "uuid": "50850000-0000-4000-8000-000000000001",
+    "security_uuid": "50850000-0000-4000-8000-000000000002",
+    "as_of_seconds": 1700000000,
+    "time_zone": "America/New_York",
+    "price_type": "PERCENTAGE",
+    "mid": "99.5"
+  },
+  "resolve": [
+    {"name": "mid_only", "mid": "100.5", "value": "100.5", "kind": "MID"},
+    {"name": "bid_and_ask", "bid": "99", "ask": "101", "value": "100", "kind": "DERIVED_MID"},
+    {"name": "bid_only", "bid": "99", "value": "99", "kind": "BID"},
+    {"name": "ask_only", "ask": "101", "value": "101", "kind": "ASK"},
+    {"name": "mid_bid_and_ask", "mid": "100.5", "bid": "99", "ask": "101", "value": "100.5", "kind": "MID"},
+    {"name": "odd_sum_adds_a_place", "bid": "99.5", "ask": "100", "value": "99.75", "kind": "DERIVED_MID"},
+    {"name": "beyond_float_and_28_digit_precision", "bid": "99.1234567890123456789012345", "ask": "101", "value": "100.06172839450617283945061725", "kind": "DERIVED_MID"}
+  ],
+  "validate": [
+    {"name": "none_set", "violations": ["mid"]},
+    {"name": "ask_below_bid", "bid": "101", "ask": "99", "violations": ["ask"]},
+    {"name": "mid_with_ask_below_bid", "mid": "100", "bid": "101", "ask": "99", "violations": ["ask"]},
+    {"name": "bid_equals_ask", "bid": "100", "ask": "100", "violations": []},
+    {"name": "mid_only", "mid": "100", "violations": []},
+    {"name": "bid_only", "bid": "100", "violations": []},
+    {"name": "ask_only", "ask": "100", "violations": []}
+  ],
+  "golden_cases": []
+}

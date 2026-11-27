@@ -55,7 +55,7 @@ class TransactionPriceInlineTest {
         return PriceProto.newBuilder()
                 .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(PRICE_AS_OF))
-                .setPrice(ProtoSerializationUtil.serializeBigDecimal(new BigDecimal(decimal)))
+                .setMid(ProtoSerializationUtil.serializeBigDecimal(new BigDecimal(decimal)))
                 .setSecurity(security)
                 .build();
     }
@@ -75,7 +75,7 @@ class TransactionPriceInlineTest {
 
     private static void assertInlinePrice(PriceProto original, PriceProto out) {
         assertFalse(out.getIsLink(), "price must stay inline");
-        assertEquals(original.getPrice(), out.getPrice());
+        assertEquals(original.getMid(), out.getMid());
         assertEquals(original.getUuid(), out.getUuid());
         assertEquals(original.getAsOf(), out.getAsOf());
         assertTrue(out.getSecurity().getIsLink(), "price security must be a link");

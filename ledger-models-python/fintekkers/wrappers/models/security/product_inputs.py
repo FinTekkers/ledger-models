@@ -38,6 +38,7 @@ from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.security.security_pb2 import SecurityProto
+from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.requests.valuation.product_inputs_pb2 import (
     BondInput,
     CashInput,
@@ -58,6 +59,7 @@ from fintekkers.wrappers.models.errors import (
     violation,
 )
 from fintekkers.wrappers.models.security import product_hierarchy
+from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal, is_decimal_set, midpoint
 
 _UNKNOWN_COUPON = CouponTypeProto.Name(CouponTypeProto.UNKNOWN_COUPON_TYPE)
 
@@ -244,18 +246,36 @@ class MarketData:
     curve: Optional[YieldCurveInput] = None
 
 
+def _resolved_price(price: PriceProto) -> Optional[DecimalValueProto]:
+    """LM-508: the resolved price decimal for for_security, or None when none is set."""
+    has = {f: price.HasField(f) and is_decimal_set(getattr(price, f)) for f in ("mid", "bid", "ask")}
+    if has["mid"]:
+        return price.mid
+    if has["bid"] and has["ask"]:
+        return encode_decimal(midpoint(decode_decimal(price.bid), decode_decimal(price.ask)))
+    if has["bid"]:
+        return price.bid
+    if has["ask"]:
+        return price.ask
+    return None
+
+
 def for_security(security: SecurityProto, price: PriceProto,
                  market_data: Optional[MarketData] = None) -> ProductInput:
     """The ProductInput for `security`, in the input type input_type_for picks.
 
-    Sets the input type's security and copies price.price as is into clean_price
-    (bond, tips, frn, mbs) or unit_price (equity, cash). Never sets
-    cost_basis. Raises UnmappedProductTypeError when the type has no input type and
+    Sets the input type's security and puts the price's resolved value into
+    clean_price (bond, tips, frn, mbs) or unit_price (equity, cash). LM-508:
+    the value is the PriceProto comment's order: mid if set; else the bid/ask
+    midpoint when both are set; else the one side that is set, so a bid-only
+    quote is valued at its bid. Mid, bid or ask is copied as is; only the
+    midpoint is a new decimal. With none set the price field is left unset.
+    Never sets cost_basis. Raises UnmappedProductTypeError when the type has no input type and
     MissingMarketDataError when `market_data` lacks a kind the input type requires.
     """
     md = market_data if market_data is not None else MarketData()
     input_type = input_type_for(security)
-    p = price.price if price.HasField("price") else None
+    p = _resolved_price(price)
     out = ProductInput()
     if input_type == "bond":
         out.bond.CopyFrom(BondInput(security=security, clean_price=p))

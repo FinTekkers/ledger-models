@@ -207,7 +207,7 @@ async function testSerialization(): Promise<boolean> {
     expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1");
 
     let price: PriceProto = position.getFieldValue(FieldProto.PRICE);
-    expect(toCanonicalString(decodeDecimal(price.getPrice()!))).toBe("1.0");
+    expect(toCanonicalString(decodeDecimal(price.getMid()!))).toBe("1.0");
 
     let tenor = position.getFieldValue(FieldProto.TENOR);
     expect(tenor.getTenorDescription()).toBe("3M");
@@ -230,7 +230,7 @@ function getPosition(includeUnknownEnumValue: boolean) {
     let id = new UUID(UUID.random().toBytes());
 
     let price = new PriceProto()
-        .setPrice(encodeDecimal(parseDecimalString("1.0")))
+        .setMid(encodeDecimal(parseDecimalString("1.0")))
         .setUuid(id.toUUIDProto())
         .setSecurity(security);
 
