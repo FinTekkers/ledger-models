@@ -11,6 +11,8 @@ package fintekkers.requests.valuation;
  * maturity_date) are read from the SecurityProto. dated_date is not read
  * today; see VS-69.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
+ * When ValuationRequestProto.settlement_convention is set, the settlement date
+ * is the effective settlement date it derives instead (LM-509).
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -439,6 +441,8 @@ private static final long serialVersionUID = 0L;
    * maturity_date) are read from the SecurityProto. dated_date is not read
    * today; see VS-69.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement date
+   * is the effective settlement date it derives instead (LM-509).
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *

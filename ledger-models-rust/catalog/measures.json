@@ -548,6 +548,24 @@
       "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["DIRECTED_QUANTITY", "INDEX_RATIO"]
+    },
+    {
+      "name": "DV01_PER_MILLION",
+      "enum_value": 31,
+      "display_name": "DV01 per Million",
+      "description": "The dollar value of a one-basis-point (0.01%) yield change per 1,000,000 face, in settlement currency (LM-509). Size-independent, unlike DV01 (25), which is per the position's face.",
+      "formula": "DV01_PER_MILLION = ModifiedDuration × dirty price × 1,000,000 × 0.0001, where dirty price is per unit of face (the % of par dirty price / 100, e.g. 1.005 for 100.50). See MeasureProto.DV01_PER_MILLION in measure.proto (the spec).",
+      "units": "Dollars per basis point per 1,000,000 face, in settlement currency (for a non-USD bond, read dollar as one unit of settlement currency)",
+      "category": "risk",
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "model_assumptions": [
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price.",
+        "Computed at the request's effective settlement date (ValuationRequestProto.settlement_convention when set)",
+        "Not computed yet: implemented flips to true in the valuation-service item that computes it"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["MODIFIED_DURATION", "DIRTY_PRICE"]
     }
   ]
 }

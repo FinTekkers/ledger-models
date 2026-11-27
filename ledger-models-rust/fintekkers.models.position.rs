@@ -240,6 +240,8 @@ pub enum MeasureProto {
     ///      ValuationRequestProto.asof_datetime. It uses only the m-3 and m-2
     ///      readings in TipsInput.cpi. Extra lot months there serve PROFIT_LOSS
     ///      and are ignored here.
+    ///      When ValuationRequestProto.settlement_convention is set, the valuation
+    ///      date is the date it derives instead (LM-509).
     ///    Rounding: the index ratio is INDEX_RATIO, rounded to 5 decimals per
     ///      31 CFR 356 Appendix B. real_acb_i, the weighted average and the
     ///      result are not rounded further.
@@ -845,6 +847,8 @@ pub enum MeasureProto {
     BondEquivalentYield = 27,
     /// The reference CPI of a TIPS for the settlement date (the UTC date of
     /// ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.
+    /// When ValuationRequestProto.settlement_convention is set, the settlement
+    /// date is the effective settlement date it derives instead (LM-509).
     ///
     /// Formula:
     ///    With TipsInput.cpi.reference_cpi: the value as given.
@@ -855,6 +859,8 @@ pub enum MeasureProto {
     ///    time_zone is not used), d the settlement day of month,
     ///    days_in_month the number of days in month m, and CPI(m-k) the reading
     ///    for the month k months before m.
+    ///    With ValuationRequestProto.settlement_convention set, m and d come from
+    ///    the effective settlement date it derives instead (LM-509).
     ///
     /// Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →
     ///    RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645... → 320.72581.
@@ -930,6 +936,8 @@ pub enum MeasureProto {
     ///    Where face is the position's original, unadjusted face, i.e.
     ///    DIRECTED_QUANTITY, and INDEX_RATIO is the index ratio for the as-of
     ///    date (the UTC date of ValuationRequestProto.asof_datetime).
+    ///    With ValuationRequestProto.settlement_convention set, the as-of date is
+    ///    the effective settlement date it derives instead (LM-509).
     ///
     /// Example: face 10.0B, INDEX_RATIO 1.381 →
     ///    InflationCompensation = 10.0B × (1.381 − 1) = 3.81B.
@@ -950,6 +958,30 @@ pub enum MeasureProto {
     /// Applicability: TIPS only.
     /// Units: Dollars, nominal (e.g. 3.81B for the example above).
     InflationCompensation = 30,
+    /// DV01_PER_MILLION (LM-509): the dollar value of a one-basis-point (0.01%)
+    /// yield change per 1,000,000 face, in settlement currency. For a non-USD
+    /// bond, read "dollar" as one unit of settlement currency.
+    /// Size-independent, unlike DV01 (25), which is per the position's face.
+    ///
+    /// Formula:
+    ///    DV01_PER_MILLION = ModifiedDuration × dirty price × 1,000,000 × 0.0001
+    ///    Where dirty price is per unit of face (the % of par dirty price / 100).
+    ///
+    /// For ModifiedDuration=5 and dirty price 100.50:
+    ///    DV01_PER_MILLION = 5 × 1.005 × 1,000,000 × 0.0001 = $502.50 per bp
+    ///    per 1,000,000 face, whatever the position's face.
+    ///
+    /// Model assumptions:
+    ///    - Same sign convention as DV01: positive for a bond whose price falls
+    ///      when its yield rises (the $502.50 above).
+    ///    - Street/SIFMA stub convention on the dirty price, as for DV01 and
+    ///      MODIFIED_DURATION, at the request's effective settlement date (see
+    ///      ValuationRequestProto.settlement_convention).
+    ///    - Computed by valuation-service. ledger-models carries the value only.
+    ///
+    /// Applicability: as DV01.
+    /// Units: Dollars (settlement currency) per basis point per 1,000,000 face.
+    Dv01PerMillion = 31,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -988,6 +1020,7 @@ impl MeasureProto {
             MeasureProto::ReferenceCpi => "REFERENCE_CPI",
             MeasureProto::IndexRatio => "INDEX_RATIO",
             MeasureProto::InflationCompensation => "INFLATION_COMPENSATION",
+            MeasureProto::Dv01PerMillion => "DV01_PER_MILLION",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1023,6 +1056,7 @@ impl MeasureProto {
             "REFERENCE_CPI" => Some(Self::ReferenceCpi),
             "INDEX_RATIO" => Some(Self::IndexRatio),
             "INFLATION_COMPENSATION" => Some(Self::InflationCompensation),
+            "DV01_PER_MILLION" => Some(Self::Dv01PerMillion),
             _ => None,
         }
     }

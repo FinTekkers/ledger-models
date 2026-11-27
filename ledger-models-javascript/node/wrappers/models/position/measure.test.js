@@ -104,6 +104,7 @@ describe('Measure.getAllTypeNames', () => {
         //   REFERENCE_CPI = 28;           (LM-343 — TIPS index ratio inputs)
         //   INDEX_RATIO = 29;             (LM-343)
         //   INFLATION_COMPENSATION = 30;  (LM-433 — TIPS inflation accrual)
+        //   DV01_PER_MILLION = 31;        (LM-509 — DV01 per 1,000,000 face)
         expect(measure_1.Measure.getAllTypeNames()).toEqual([
             'DIRECTED_QUANTITY',
             'MARKET_VALUE',
@@ -134,6 +135,7 @@ describe('Measure.getAllTypeNames', () => {
             'REFERENCE_CPI',
             'INDEX_RATIO',
             'INFLATION_COMPENSATION',
+            'DV01_PER_MILLION',
         ]);
     });
     test('excludes the UNKNOWN_MEASURE sentinel', () => {

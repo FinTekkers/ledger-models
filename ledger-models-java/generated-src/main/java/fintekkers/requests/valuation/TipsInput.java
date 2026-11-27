@@ -12,6 +12,8 @@ package fintekkers.requests.valuation;
  * security.bond_details. TIPS-specific extras (base_cpi, index_date,
  * inflation_index_type) are read from security.tips_extension.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
+ * When ValuationRequestProto.settlement_convention is set, the settlement date
+ * is the effective settlement date it derives instead (LM-509).
  * cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
  * of future inflation, not a CPI input.
  * ═══════════════════════════════════════════════════════════════════════════
@@ -167,6 +169,8 @@ private static final long serialVersionUID = 0L;
    * month no date needs is allowed and ignored. A duplicate (year, month) or
    * a month outside 1-12 is still rejected. See InflationIndexInput and
    * MonthlyIndexReadings.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -190,6 +194,8 @@ private static final long serialVersionUID = 0L;
    * month no date needs is allowed and ignored. A duplicate (year, month) or
    * a month outside 1-12 is still rejected. See InflationIndexInput and
    * MonthlyIndexReadings.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -213,6 +219,8 @@ private static final long serialVersionUID = 0L;
    * month no date needs is allowed and ignored. A duplicate (year, month) or
    * a month outside 1-12 is still rejected. See InflationIndexInput and
    * MonthlyIndexReadings.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -229,6 +237,8 @@ private static final long serialVersionUID = 0L;
    * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
    * constant from the settlement date to maturity. Settlement date is read
    * from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement
+   * date is the effective settlement date it derives instead (LM-509).
    * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
    * payment date t is
    *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -254,6 +264,8 @@ private static final long serialVersionUID = 0L;
    * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
    * constant from the settlement date to maturity. Settlement date is read
    * from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement
+   * date is the effective settlement date it derives instead (LM-509).
    * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
    * payment date t is
    *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -279,6 +291,8 @@ private static final long serialVersionUID = 0L;
    * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
    * constant from the settlement date to maturity. Settlement date is read
    * from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement
+   * date is the effective settlement date it derives instead (LM-509).
    * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
    * payment date t is
    *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -570,6 +584,8 @@ private static final long serialVersionUID = 0L;
    * security.bond_details. TIPS-specific extras (base_cpi, index_date,
    * inflation_index_type) are read from security.tips_extension.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement date
+   * is the effective settlement date it derives instead (LM-509).
    * cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
    * of future inflation, not a CPI input.
    * ═══════════════════════════════════════════════════════════════════════════
@@ -1224,6 +1240,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1246,6 +1264,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1272,6 +1292,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1303,6 +1325,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1332,6 +1356,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1366,6 +1392,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1394,6 +1422,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1417,6 +1447,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1443,6 +1475,8 @@ private static final long serialVersionUID = 0L;
      * month no date needs is allowed and ignored. A duplicate (year, month) or
      * a month outside 1-12 is still rejected. See InflationIndexInput and
      * MonthlyIndexReadings.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1469,6 +1503,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1493,6 +1529,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1521,6 +1559,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1554,6 +1594,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1585,6 +1627,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1621,6 +1665,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1651,6 +1697,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1676,6 +1724,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -1704,6 +1754,8 @@ private static final long serialVersionUID = 0L;
      * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
      * constant from the settlement date to maturity. Settlement date is read
      * from ValuationRequestProto.asof_datetime.
+     * When ValuationRequestProto.settlement_convention is set, the settlement
+     * date is the effective settlement date it derives instead (LM-509).
      * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
      * payment date t is
      *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,

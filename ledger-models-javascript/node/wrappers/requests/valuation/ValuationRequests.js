@@ -28,6 +28,35 @@ class ValuationRequests {
             .setPositionInput(position)
             .setProductInput(productInput);
     }
+    /**
+     * A SettlementConventionProto for ValuationRequestProto.settlement_convention
+     * (80), LM-509.
+     *
+     * Checks only the rules in the proto comment that need no calendar:
+     * trade_date is set, the lag is a whole number not below 0 and calendar_id
+     * is not blank. It never computes a settlement date, and an unknown
+     * calendar_id passes: valuation-service owns the calendars. A lag of 0 is
+     * valid (same-day settlement). Attach it with
+     * `request.setSettlementConvention(convention)`.
+     */
+    static settlementConvention(tradeDate, lagBusinessDays, calendarId) {
+        const violations = [];
+        if (tradeDate === undefined || tradeDate === null) {
+            violations.push((0, errors_1.violation)('settlement_convention.trade_date', undefined, 'trade_date is required'));
+        }
+        if (!Number.isInteger(lagBusinessDays) || lagBusinessDays < 0) {
+            violations.push((0, errors_1.violation)('settlement_convention.settlement_lag_business_days', undefined, `settlement_lag_business_days must be a whole number, 0 or more, got ${lagBusinessDays}`));
+        }
+        if (typeof calendarId !== 'string' || calendarId.trim() === '') {
+            violations.push((0, errors_1.violation)('settlement_convention.calendar_id', undefined, 'calendar_id is required'));
+        }
+        if (violations.length > 0)
+            throw new errors_1.ModelValidationError(violations);
+        return new valuation_request_pb_1.SettlementConventionProto()
+            .setTradeDate(tradeDate)
+            .setSettlementLagBusinessDays(lagBusinessDays)
+            .setCalendarId(calendarId);
+    }
 }
 exports.ValuationRequests = ValuationRequests;
 //# sourceMappingURL=ValuationRequests.js.map

@@ -490,6 +490,9 @@ BUILDERS = {
     # LM-410: the request is the builder's; product_input and position_input are the caller's.
     "requests.valuation.ValuationRequests.typed": lambda: ValuationRequests.typed(
         _timestamp(), for_security(_note(), _price()), stamp_own(PositionProto()), [MeasureProto.MARKET_VALUE]),
+    # LM-509: an unstamped value message (no object_type); trade_date is the caller's.
+    "requests.valuation.ValuationRequests.settlement_convention": lambda: (
+        ValuationRequests.settlement_convention(LocalDateProto(year=2026, month=11, day=25), 1, "US_SIFMA")),
     # Takes only message filter values: it packs every value into an Any.
     "requests.transaction.QueryTransactionRequest.create_query_request": lambda: (
         QueryTransactionRequest.create_query_request({FieldProto.ID: _uuid(106)})),

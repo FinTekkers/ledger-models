@@ -182,6 +182,8 @@ public interface FrnInputOrBuilder extends
    * date counts). When curve is absent, it builds the flat-forward curve
    * (see curve). When curve is absent and no fixing_date is on or before
    * that date, the request is invalid for a curve measure.
+   * When ValuationRequestProto.settlement_convention is set, that date is the
+   * effective settlement date it derives instead (LM-509).
    * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
@@ -199,6 +201,8 @@ public interface FrnInputOrBuilder extends
    * date counts). When curve is absent, it builds the flat-forward curve
    * (see curve). When curve is absent and no fixing_date is on or before
    * that date, the request is invalid for a curve measure.
+   * When ValuationRequestProto.settlement_convention is set, that date is the
+   * effective settlement date it derives instead (LM-509).
    * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
@@ -215,6 +219,8 @@ public interface FrnInputOrBuilder extends
    * date counts). When curve is absent, it builds the flat-forward curve
    * (see curve). When curve is absent and no fixing_date is on or before
    * that date, the request is invalid for a curve measure.
+   * When ValuationRequestProto.settlement_convention is set, that date is the
+   * effective settlement date it derives instead (LM-509).
    * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
@@ -231,6 +237,8 @@ public interface FrnInputOrBuilder extends
    * date counts). When curve is absent, it builds the flat-forward curve
    * (see curve). When curve is absent and no fixing_date is on or before
    * that date, the request is invalid for a curve measure.
+   * When ValuationRequestProto.settlement_convention is set, that date is the
+   * effective settlement date it derives instead (LM-509).
    * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
@@ -248,6 +256,8 @@ public interface FrnInputOrBuilder extends
    * date counts). When curve is absent, it builds the flat-forward curve
    * (see curve). When curve is absent and no fixing_date is on or before
    * that date, the request is invalid for a curve measure.
+   * When ValuationRequestProto.settlement_convention is set, that date is the
+   * effective settlement date it derives instead (LM-509).
    * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *

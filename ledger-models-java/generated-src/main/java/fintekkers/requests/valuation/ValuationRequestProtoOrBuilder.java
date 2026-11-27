@@ -189,4 +189,67 @@ public interface ValuationRequestProtoOrBuilder extends
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
    */
   fintekkers.requests.valuation.ProductInputOrBuilder getProductInputOrBuilder();
+
+  /**
+   * <pre>
+   * Optional settlement convention (LM-509). It sets the effective settlement
+   * date of this request: the date every settlement-dependent rule in
+   * product_inputs.proto and measure.proto uses (accrued interest, the
+   * settlement month of a TIPS reference CPI, the latest FRN fixing, and so on).
+   *   - Unset: the effective settlement date is the UTC date of asof_datetime,
+   *     exactly as before LM-509, and the response leaves settlement_date and
+   *     measure_asof_date unset.
+   *   - Set: the effective settlement date is trade_date plus
+   *     settlement_lag_business_days business days on the calendar_id
+   *     calendar (see SettlementConventionProto). The response returns it in
+   *     ValuationResponseProto.settlement_date.
+   * asof_datetime still selects the market data either way.
+   * A message field, so unset is distinct from a lag of 0.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.SettlementConventionProto settlement_convention = 80;</code>
+   * @return Whether the settlementConvention field is set.
+   */
+  boolean hasSettlementConvention();
+  /**
+   * <pre>
+   * Optional settlement convention (LM-509). It sets the effective settlement
+   * date of this request: the date every settlement-dependent rule in
+   * product_inputs.proto and measure.proto uses (accrued interest, the
+   * settlement month of a TIPS reference CPI, the latest FRN fixing, and so on).
+   *   - Unset: the effective settlement date is the UTC date of asof_datetime,
+   *     exactly as before LM-509, and the response leaves settlement_date and
+   *     measure_asof_date unset.
+   *   - Set: the effective settlement date is trade_date plus
+   *     settlement_lag_business_days business days on the calendar_id
+   *     calendar (see SettlementConventionProto). The response returns it in
+   *     ValuationResponseProto.settlement_date.
+   * asof_datetime still selects the market data either way.
+   * A message field, so unset is distinct from a lag of 0.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.SettlementConventionProto settlement_convention = 80;</code>
+   * @return The settlementConvention.
+   */
+  fintekkers.requests.valuation.SettlementConventionProto getSettlementConvention();
+  /**
+   * <pre>
+   * Optional settlement convention (LM-509). It sets the effective settlement
+   * date of this request: the date every settlement-dependent rule in
+   * product_inputs.proto and measure.proto uses (accrued interest, the
+   * settlement month of a TIPS reference CPI, the latest FRN fixing, and so on).
+   *   - Unset: the effective settlement date is the UTC date of asof_datetime,
+   *     exactly as before LM-509, and the response leaves settlement_date and
+   *     measure_asof_date unset.
+   *   - Set: the effective settlement date is trade_date plus
+   *     settlement_lag_business_days business days on the calendar_id
+   *     calendar (see SettlementConventionProto). The response returns it in
+   *     ValuationResponseProto.settlement_date.
+   * asof_datetime still selects the market data either way.
+   * A message field, so unset is distinct from a lag of 0.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.SettlementConventionProto settlement_convention = 80;</code>
+   */
+  fintekkers.requests.valuation.SettlementConventionProtoOrBuilder getSettlementConventionOrBuilder();
 }

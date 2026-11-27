@@ -135,4 +135,76 @@ public interface ValuationResponseProtoOrBuilder extends
    */
   fintekkers.models.valuation.CashflowProtoOrBuilder getCashflowsOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * The effective settlement date (LM-509): trade_date plus
+   * settlement_lag_business_days business days on the calendar_id calendar,
+   * from ValuationRequestProto.settlement_convention.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+   * @return Whether the settlementDate field is set.
+   */
+  boolean hasSettlementDate();
+  /**
+   * <pre>
+   * The effective settlement date (LM-509): trade_date plus
+   * settlement_lag_business_days business days on the calendar_id calendar,
+   * from ValuationRequestProto.settlement_convention.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+   * @return The settlementDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getSettlementDate();
+  /**
+   * <pre>
+   * The effective settlement date (LM-509): trade_date plus
+   * settlement_lag_business_days business days on the calendar_id calendar,
+   * from ValuationRequestProto.settlement_convention.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getSettlementDateOrBuilder();
+
+  /**
+   * <pre>
+   * The date every measure in measure_results is computed at (LM-509). It
+   * equals settlement_date today; it is a separate field for a future forward
+   * valuation, where the two may differ.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+   * @return Whether the measureAsofDate field is set.
+   */
+  boolean hasMeasureAsofDate();
+  /**
+   * <pre>
+   * The date every measure in measure_results is computed at (LM-509). It
+   * equals settlement_date today; it is a separate field for a future forward
+   * valuation, where the two may differ.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+   * @return The measureAsofDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getMeasureAsofDate();
+  /**
+   * <pre>
+   * The date every measure in measure_results is computed at (LM-509). It
+   * equals settlement_date today; it is a separate field for a future forward
+   * valuation, where the two may differ.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getMeasureAsofDateOrBuilder();
 }

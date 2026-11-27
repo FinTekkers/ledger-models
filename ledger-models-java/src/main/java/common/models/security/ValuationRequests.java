@@ -4,8 +4,10 @@ import common.models.errors.ModelValidationException;
 import common.util.ObjectTypes;
 import fintekkers.models.position.MeasureProto;
 import fintekkers.models.position.PositionProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
 import fintekkers.requests.valuation.ProductInput;
+import fintekkers.requests.valuation.SettlementConventionProto;
 import fintekkers.requests.valuation.ValuationRequestProto;
 import fintekkers.requests.util.errors.FieldViolation.FieldViolationProto;
 
@@ -45,6 +47,42 @@ public final class ValuationRequests {
                 .setAsofDatetime(asof)
                 .setPositionInput(position)
                 .setProductInput(productInput)
+                .build();
+    }
+
+    /**
+     * A {@code SettlementConventionProto} for
+     * ValuationRequestProto.settlement_convention (80), LM-509.
+     *
+     * <p>Checks only the rules in the proto comment that need no calendar:
+     * trade_date is set, the lag is not negative and calendar_id is not blank.
+     * It never computes a settlement date, and an unknown calendar_id passes:
+     * valuation-service owns the calendars. A lag of 0 is valid (same-day
+     * settlement). Attach it with
+     * {@code request.toBuilder().setSettlementConvention(convention)}.
+     *
+     * @throws ModelValidationException with one violation per broken rule
+     */
+    public static SettlementConventionProto settlementConvention(LocalDateProto tradeDate, int lagBusinessDays,
+                                                                 String calendarId) {
+        List<FieldViolationProto> violations = new ArrayList<>();
+        if (tradeDate == null) {
+            violations.add(ModelValidationException.violation("settlement_convention.trade_date", null,
+                    "trade_date is required"));
+        }
+        if (lagBusinessDays < 0) {
+            violations.add(ModelValidationException.violation("settlement_convention.settlement_lag_business_days",
+                    null, "settlement_lag_business_days must be 0 or more, got " + lagBusinessDays));
+        }
+        if (calendarId == null || calendarId.isBlank()) {
+            violations.add(ModelValidationException.violation("settlement_convention.calendar_id", null,
+                    "calendar_id is required"));
+        }
+        if (!violations.isEmpty()) throw new ModelValidationException(violations);
+        return SettlementConventionProto.newBuilder()
+                .setTradeDate(tradeDate)
+                .setSettlementLagBusinessDays(lagBusinessDays)
+                .setCalendarId(calendarId)
                 .build();
     }
 }

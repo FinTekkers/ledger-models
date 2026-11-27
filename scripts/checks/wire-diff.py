@@ -432,8 +432,25 @@ def lm508(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM508_ADDED and new == LM508_ADDED[key]
 
 
+LM509_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-509.json").read_text())
+LM509 = {
+    **{f"message {m}": "message" for m in LM509_SPEC["added_messages"]},
+    **{f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}" for f in LM509_SPEC["added"]},
+    **{f"value {v['enum']} = {v['number']}": v["name"] for v in LM509_SPEC["added_values"]},
+}
+
+
+def lm509(key: str, old, new, head: dict) -> bool:
+    """LM-509: SettlementConventionProto (trade_date = 1, settlement_lag_business_days
+    = 2, calendar_id = 3), ValuationRequestProto.settlement_convention = 80,
+    ValuationResponseProto.settlement_date = 60 and measure_asof_date = 61, and
+    MeasureProto.DV01_PER_MILLION = 31 added. Additions of exactly these only;
+    DV01 = 25 and every existing field keep their numbers, names and types."""
+    return old is None and key in LM509 and new == LM509[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477, lm484, lm491, lm498, lm508]
+           lm433, lm465, lm477, lm484, lm491, lm498, lm508, lm509]
 
 
 def main() -> int:

@@ -12,6 +12,8 @@ package fintekkers.requests.valuation;
  * reference CPI itself. There is no source field: index names the index, and
  * where a reading came from is price-service's concern. See
  * docs/adr/inflation_index_input.md.
+ * When ValuationRequestProto.settlement_convention is set, the settlement date
+ * is the effective settlement date it derives instead (LM-509).
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -147,6 +149,8 @@ private static final long serialVersionUID = 0L;
    * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
    * month no date needs is allowed and ignored. A duplicate (year, month)
    * or a month outside 1-12 is still rejected.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -166,6 +170,8 @@ private static final long serialVersionUID = 0L;
    * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
    * month no date needs is allowed and ignored. A duplicate (year, month)
    * or a month outside 1-12 is still rejected.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -188,6 +194,8 @@ private static final long serialVersionUID = 0L;
    * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
    * month no date needs is allowed and ignored. A duplicate (year, month)
    * or a month outside 1-12 is still rejected.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -454,6 +462,8 @@ private static final long serialVersionUID = 0L;
    * reference CPI itself. There is no source field: index names the index, and
    * where a reading came from is price-service's concern. See
    * docs/adr/inflation_index_input.md.
+   * When ValuationRequestProto.settlement_convention is set, the settlement date
+   * is the effective settlement date it derives instead (LM-509).
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *
@@ -872,6 +882,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -891,6 +903,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -920,6 +934,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -947,6 +963,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -972,6 +990,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1006,6 +1026,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1036,6 +1058,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1053,6 +1077,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1078,6 +1104,8 @@ private static final long serialVersionUID = 0L;
      * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
      * month no date needs is allowed and ignored. A duplicate (year, month)
      * or a month outside 1-12 is still rejected.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
