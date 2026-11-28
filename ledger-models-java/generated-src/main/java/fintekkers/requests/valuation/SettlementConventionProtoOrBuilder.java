@@ -37,7 +37,8 @@ public interface SettlementConventionProtoOrBuilder extends
   /**
    * <pre>
    * Settlement lag in business days on calendar_id (e.g. 1 for T+1). 0 means
-   * same-day settlement.
+   * same-day settlement, rolled forward to the next business day when
+   * trade_date is not one (see SettlementConventionProto).
    * </pre>
    *
    * <code>uint32 settlement_lag_business_days = 2;</code>
