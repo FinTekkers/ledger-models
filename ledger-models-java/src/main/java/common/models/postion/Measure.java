@@ -93,11 +93,7 @@ public enum Measure {
 
     INFLATION_COMPENSATION("TIPS dollar inflation accrual on original face at the as-of date. " +
             "See MeasureProto.INFLATION_COMPENSATION for the spec; computed by valuation-service. " +
-            "TIPS-specific; absent otherwise."),
-
-    DV01_PER_MILLION("Dollar value of a 1bp yield change per 1,000,000 face, in settlement currency (LM-509). " +
-            "See MeasureProto.DV01_PER_MILLION for the spec; computed by valuation-service. " +
-            "Size-independent, unlike DV01 (per the position's face).");
+            "TIPS-specific; absent otherwise.");
 
     static {
         Set<String> measureNames = Arrays.stream(Measure.values())

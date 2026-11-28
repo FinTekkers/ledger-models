@@ -958,30 +958,6 @@ pub enum MeasureProto {
     /// Applicability: TIPS only.
     /// Units: Dollars, nominal (e.g. 3.81B for the example above).
     InflationCompensation = 30,
-    /// DV01_PER_MILLION (LM-509): the dollar value of a one-basis-point (0.01%)
-    /// yield change per 1,000,000 face, in settlement currency. For a non-USD
-    /// bond, read "dollar" as one unit of settlement currency.
-    /// Size-independent, unlike DV01 (25), which is per the position's face.
-    ///
-    /// Formula:
-    ///    DV01_PER_MILLION = ModifiedDuration × dirty price × 1,000,000 × 0.0001
-    ///    Where dirty price is per unit of face (the % of par dirty price / 100).
-    ///
-    /// For ModifiedDuration=5 and dirty price 100.50:
-    ///    DV01_PER_MILLION = 5 × 1.005 × 1,000,000 × 0.0001 = $502.50 per bp
-    ///    per 1,000,000 face, whatever the position's face.
-    ///
-    /// Model assumptions:
-    ///    - Same sign convention as DV01: positive for a bond whose price falls
-    ///      when its yield rises (the $502.50 above).
-    ///    - Street/SIFMA stub convention on the dirty price, as for DV01 and
-    ///      MODIFIED_DURATION, at the request's effective settlement date (see
-    ///      ValuationRequestProto.settlement_convention).
-    ///    - Computed by valuation-service. ledger-models carries the value only.
-    ///
-    /// Applicability: as DV01.
-    /// Units: Dollars (settlement currency) per basis point per 1,000,000 face.
-    Dv01PerMillion = 31,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1020,7 +996,6 @@ impl MeasureProto {
             MeasureProto::ReferenceCpi => "REFERENCE_CPI",
             MeasureProto::IndexRatio => "INDEX_RATIO",
             MeasureProto::InflationCompensation => "INFLATION_COMPENSATION",
-            MeasureProto::Dv01PerMillion => "DV01_PER_MILLION",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1056,7 +1031,6 @@ impl MeasureProto {
             "REFERENCE_CPI" => Some(Self::ReferenceCpi),
             "INDEX_RATIO" => Some(Self::IndexRatio),
             "INFLATION_COMPENSATION" => Some(Self::InflationCompensation),
-            "DV01_PER_MILLION" => Some(Self::Dv01PerMillion),
             _ => None,
         }
     }

@@ -10,8 +10,5 @@
     {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 80, "name": "settlement_convention", "type": ".fintekkers.requests.valuation.SettlementConventionProto"},
     {"message": ".fintekkers.requests.valuation.ValuationResponseProto", "number": 60, "name": "settlement_date", "type": ".fintekkers.models.util.LocalDateProto"},
     {"message": ".fintekkers.requests.valuation.ValuationResponseProto", "number": 61, "name": "measure_asof_date", "type": ".fintekkers.models.util.LocalDateProto"}
-  ],
-  "added_values": [
-    {"enum": ".fintekkers.models.position.MeasureProto", "number": 31, "name": "DV01_PER_MILLION"}
   ]
 }

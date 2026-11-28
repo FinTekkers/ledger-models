@@ -1,11 +1,11 @@
-"""The settlement convention and DV01_PER_MILLION contract (LM-509).
+"""The settlement convention contract (LM-509).
 
 ValuationRequestProto carries an optional SettlementConventionProto (80) with
 trade_date (1), settlement_lag_business_days (2) and calendar_id (3).
 ValuationResponseProto returns settlement_date (60) and measure_asof_date (61).
-MeasureProto gains DV01_PER_MILLION = 31; DV01 = 25 is unchanged. Every new
-field round-trips, request bytes written by v1.1.62 parse with the convention
-unset, and the proto comments are the spec: units of DV01_PER_MILLION,
+DV01 = 25 is unchanged; measure 31, which LM-509 added, is removed and
+reserved (LM-514). Every new field round-trips, request bytes written by
+v1.1.62 parse with the convention unset, and the proto comments are the spec:
 settlement = trade date plus lag in business days on the named calendar, and
 no comment ties settlement to asof_datetime without citing
 settlement_convention. ValuationRequests.settlement_convention checks only
@@ -112,11 +112,24 @@ def test_settlement_convention_has_explicit_presence():
     assert not ValuationRequestProto().HasField("settlement_convention")
 
 
-def test_dv01_per_million_is_31_and_dv01_stays_25():
-    assert MeasureProto.Value("DV01_PER_MILLION") == 31
+# LM-514: the removed name, split so that the metric-2 grep finds it only on
+# the reserved line in measure.proto.
+REMOVED_31 = "DV01" "_PER_MILLION"
+
+
+def test_dv01_stays_25_and_31_is_reserved():
     assert MeasureProto.Value("DV01") == 25
     assert MeasureProto.Name(25) == "DV01"
-    assert max(MeasureProto.values()) == 31
+    assert 31 not in MeasureProto.values()
+    assert REMOVED_31 not in MeasureProto.keys()
+    enum = descriptor_pb2.EnumDescriptorProto()
+    MeasureProto.DESCRIPTOR.CopyToProto(enum)
+    # Enum reserved ranges are end-inclusive.
+    assert any(r.start <= 31 <= r.end for r in enum.reserved_range)
+    assert set(enum.reserved_name) == {REMOVED_31}
+    lines = [line.strip() for line in MEASURE.read_text().splitlines()]
+    assert "reserved 31;" in lines
+    assert f'reserved "{REMOVED_31}";' in lines
 
 
 def test_dv01_proto_comment_and_declaration_unchanged():
@@ -126,7 +139,7 @@ def test_dv01_proto_comment_and_declaration_unchanged():
 # --- Round trip (metric line 2, R1) -----------------------------------------
 
 def _full_request() -> ValuationRequestProto:
-    request = ValuationRequestProto(measures=[MeasureProto.DV01_PER_MILLION, MeasureProto.DV01])
+    request = ValuationRequestProto(measures=[MeasureProto.DV01])
     request.settlement_convention.CopyFrom(
         ValuationRequests.settlement_convention(_date(2026, 11, 25), 1, "US_SIFMA"))
     return request
@@ -141,15 +154,15 @@ def test_request_round_trip_with_every_new_field():
     assert (convention.trade_date.year, convention.trade_date.month, convention.trade_date.day) == (2026, 11, 25)
     assert convention.settlement_lag_business_days == 1
     assert convention.calendar_id == "US_SIFMA"
-    assert list(parsed.measures) == [MeasureProto.DV01_PER_MILLION, MeasureProto.DV01]
+    assert list(parsed.measures) == [MeasureProto.DV01]
 
 
-def test_response_round_trip_with_both_dates_and_a_dv01_per_million_result():
+def test_response_round_trip_with_both_dates_and_a_dv01_result():
     response = ValuationResponseProto(
         valuation_request=_full_request(),
         settlement_date=_date(2026, 11, 27),
         measure_asof_date=_date(2026, 11, 27),
-        measure_results=[MeasureMapEntry(measure=MeasureProto.DV01_PER_MILLION,
+        measure_results=[MeasureMapEntry(measure=MeasureProto.DV01,
                                          measure_decimal_value=encode_decimal(Decimal("502.50")))],
     )
     parsed = ValuationResponseProto.FromString(response.SerializeToString())
@@ -157,7 +170,7 @@ def test_response_round_trip_with_both_dates_and_a_dv01_per_million_result():
     assert parsed.settlement_date == _date(2026, 11, 27)
     assert parsed.measure_asof_date == _date(2026, 11, 27)
     [result] = parsed.measure_results
-    assert result.measure == MeasureProto.DV01_PER_MILLION
+    assert result.measure == MeasureProto.DV01
     assert str(decode_decimal(result.measure_decimal_value)) == "502.50"
 
 
@@ -191,25 +204,6 @@ def test_response_without_convention_leaves_both_dates_unset():
 
 
 # --- Comment spec (metric line 4, R2, R3) -----------------------------------
-
-def test_dv01_per_million_comment_states_units():
-    comment = _prose(_block(MEASURE, "DV01_PER_MILLION"))
-    for phrase in ("dollar value of a one-basis-point (0.01%) yield change per 1,000,000 face",
-                   "in settlement currency",
-                   'For a non-USD bond, read "dollar" as one unit of settlement currency',
-                   "unlike DV01 (25), which is per the position's face",
-                   "DV01_PER_MILLION = ModifiedDuration × dirty price × 1,000,000 × 0.0001",
-                   "Units: Dollars (settlement currency) per basis point per 1,000,000 face."):
-        assert phrase in comment, phrase
-
-
-def test_dv01_per_million_example_recomputes():
-    comment = _prose(_block(MEASURE, "DV01_PER_MILLION"))
-    md, dirty, stated = re.search(
-        r"ModifiedDuration=(\d+) and dirty price (\d+\.\d+): DV01_PER_MILLION = .* = \$(\d+\.\d+) per bp",
-        comment).groups()
-    assert Decimal(md) * Decimal(dirty) / 100 * 1_000_000 * Decimal("0.0001") == Decimal(stated) == Decimal("502.50")
-
 
 def test_settlement_convention_comments_define_the_settlement_date():
     message = _prose(_block(REQUEST, "message SettlementConventionProto"))

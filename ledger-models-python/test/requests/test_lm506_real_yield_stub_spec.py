@@ -30,7 +30,9 @@ CLEAN_INPUT = "The price input is the clean price"
 # computed on main (54bc1942) before LM-499 and unchanged since: no field, enum
 # value or number may change.
 PROTO_CODE_SHA256 = "7d7bdf6130a2b96ab3ac891a52b629a98a227eb4df2310a2bc668680d9612678"
-LM509_ADDED_VALUE = "DV01_PER_MILLION = 31;"
+# LM-514 reserves measure 31's number and name (the value LM-509 added and
+# LM-514 removed); those two lines are the only code added since.
+LM514_RESERVED = re.compile(r'^reserved (31|"[A-Z0-9_]+");$')
 
 
 def _block(path: Path, declaration: str) -> str:
@@ -96,7 +98,7 @@ def test_clean_price_stays_the_input():
 
 def test_proto_code_outside_comments_unchanged():
     code = [line.split("//")[0].rstrip() for line in MEASURE_PROTO.read_text().splitlines()]
-    # LM-509 adds exactly this enum value; the rest of the code is unchanged.
-    stripped = "\n".join(line for line in code if line.strip() and line.strip() != LM509_ADDED_VALUE)
+    # LM-514 adds exactly the two reserved lines; the rest of the code is unchanged.
+    stripped = "\n".join(line for line in code if line.strip() and not LM514_RESERVED.match(line.strip()))
     assert hashlib.sha256(stripped.encode()).hexdigest() == PROTO_CODE_SHA256
     assert f"REAL_YIELD = {measure_pb2.MeasureProto.Value('REAL_YIELD')};" in _block(MEASURE_PROTO, "REAL_YIELD")

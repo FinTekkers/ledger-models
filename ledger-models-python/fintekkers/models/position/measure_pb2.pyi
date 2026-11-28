@@ -36,7 +36,6 @@ class MeasureProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     REFERENCE_CPI: _ClassVar[MeasureProto]
     INDEX_RATIO: _ClassVar[MeasureProto]
     INFLATION_COMPENSATION: _ClassVar[MeasureProto]
-    DV01_PER_MILLION: _ClassVar[MeasureProto]
 UNKNOWN_MEASURE: MeasureProto
 DIRECTED_QUANTITY: MeasureProto
 MARKET_VALUE: MeasureProto
@@ -67,4 +66,3 @@ BOND_EQUIVALENT_YIELD: MeasureProto
 REFERENCE_CPI: MeasureProto
 INDEX_RATIO: MeasureProto
 INFLATION_COMPENSATION: MeasureProto
-DV01_PER_MILLION: MeasureProto

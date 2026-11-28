@@ -37,5 +37,4 @@ export enum MeasureProto {
     REFERENCE_CPI = 28,
     INDEX_RATIO = 29,
     INFLATION_COMPENSATION = 30,
-    DV01_PER_MILLION = 31,
 }
