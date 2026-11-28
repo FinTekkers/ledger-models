@@ -53,7 +53,8 @@ def compile_set(root: Path) -> descriptor_pb2.FileDescriptorSet:
 
 
 def shape(fds: descriptor_pb2.FileDescriptorSet) -> dict:
-    """{key: description} for every field, enum value and extension."""
+    """{key: description} for every field, enum value, extension and enum
+    reservation (number and name)."""
     out = {}
 
     def field(f: FD) -> str:
@@ -66,6 +67,13 @@ def shape(fds: descriptor_pb2.FileDescriptorSet) -> dict:
             out[f"enum {prefix}.{e.name}"] = "enum"
             for v in e.value:
                 out[f"value {prefix}.{e.name} = {v.number}"] = v.name
+            for r in e.reserved_range:
+                # Enum reserved ranges are end-inclusive in the descriptor; a
+                # range of more than one number is one key, never expanded.
+                span = f"{r.start}" if r.start == r.end else f"{r.start} to {r.end}"
+                out[f"reserved {prefix}.{e.name} = {span}"] = "reserved"
+            for n in e.reserved_name:
+                out[f"reserved-name {prefix}.{e.name} {n}"] = "reserved"
 
     def messages(prefix: str, items) -> None:
         for m in items:
@@ -436,21 +444,46 @@ LM509_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-509.json").read_
 LM509 = {
     **{f"message {m}": "message" for m in LM509_SPEC["added_messages"]},
     **{f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}" for f in LM509_SPEC["added"]},
-    **{f"value {v['enum']} = {v['number']}": v["name"] for v in LM509_SPEC["added_values"]},
 }
 
 
 def lm509(key: str, old, new, head: dict) -> bool:
     """LM-509: SettlementConventionProto (trade_date = 1, settlement_lag_business_days
     = 2, calendar_id = 3), ValuationRequestProto.settlement_convention = 80,
-    ValuationResponseProto.settlement_date = 60 and measure_asof_date = 61, and
-    MeasureProto.DV01_PER_MILLION = 31 added. Additions of exactly these only;
-    DV01 = 25 and every existing field keep their numbers, names and types."""
+    ValuationResponseProto.settlement_date = 60 and measure_asof_date = 61
+    added. Additions of exactly these only; DV01 = 25 and every existing field
+    keep their numbers, names and types. (LM-509 also added MeasureProto 31;
+    LM-514 removed it, see lm514.)"""
     return old is None and key in LM509 and new == LM509[key]
 
 
+LM514_SPEC = json.loads((REPO / "test-fixtures/removed-values/lm-514.json").read_text())
+LM514_REMOVED = {(v["enum"], v["number"]) for v in LM514_SPEC["removed_values"]}
+
+
+def lm514(key: str, old, new, head: dict) -> bool:
+    """LM-514: MeasureProto value 31 deleted. Only that deletion, and only when
+    head reserves both its number and its old name; the reservations are the
+    only additions. DV01 = 25 and every other value are unchanged."""
+    kind, rest = key.split(" ", 1)
+    if kind == "value":
+        enum, number = rest.rsplit(" = ", 1)
+        return ((enum, int(number)) in LM514_REMOVED and old is not None and new is None
+                and head.get(f"reserved {enum} = {number}") == "reserved"
+                and head.get(f"reserved-name {enum} {old}") == "reserved")
+    if kind == "reserved":
+        enum, number = rest.rsplit(" = ", 1)
+        return (number.isdigit() and (enum, int(number)) in LM514_REMOVED
+                and old is None and new == "reserved")
+    if kind == "reserved-name":
+        enum = rest.split(" ", 1)[0]
+        return (old is None and new == "reserved"
+                and any(e == enum and f"value {e} = {n}" not in head for e, n in LM514_REMOVED))
+    return False
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477, lm484, lm491, lm498, lm508, lm509]
+           lm433, lm465, lm477, lm484, lm491, lm498, lm508, lm509, lm514]
 
 
 def main() -> int:

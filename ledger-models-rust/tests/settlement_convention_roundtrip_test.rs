@@ -1,8 +1,9 @@
-//! LM-509 — the settlement convention and DV01_PER_MILLION contract.
+//! LM-509 — the settlement convention contract.
 //!
-//! A request with SettlementConventionProto (80) and DV01_PER_MILLION, and a
-//! response with settlement_date (60), measure_asof_date (61) and a
-//! DV01_PER_MILLION result, round-trip unchanged. Request bytes written by
+//! A request with SettlementConventionProto (80) and DV01, and a response
+//! with settlement_date (60), measure_asof_date (61) and a DV01 result,
+//! round-trip unchanged. Measure 31, which LM-509 added, is removed and
+//! reserved (LM-514); DV01 stays 25. Request bytes written by
 //! v1.1.62 decode with the convention unset and every existing field as it
 //! was. `valuation_requests::settlement_convention` checks only the
 //! calendar-free rule the proto comment states; it computes no date.
@@ -35,7 +36,7 @@ fn from_hex(hex: &str) -> Vec<u8> {
 
 fn full_request() -> ValuationRequestProto {
     ValuationRequestProto {
-        measures: vec![MeasureProto::Dv01PerMillion as i32, MeasureProto::Dv01 as i32],
+        measures: vec![MeasureProto::Dv01 as i32],
         settlement_convention: Some(
             settlement_convention(date(2026, 11, 25), 1, "US_SIFMA").expect("valid convention"),
         ),
@@ -44,11 +45,12 @@ fn full_request() -> ValuationRequestProto {
 }
 
 #[test]
-fn dv01_per_million_is_31_and_dv01_stays_25() {
-    assert_eq!(MeasureProto::Dv01PerMillion as i32, 31);
+fn dv01_stays_25_and_nothing_is_31() {
     assert_eq!(MeasureProto::Dv01 as i32, 25);
-    assert_eq!(MeasureProto::from_str_name("DV01_PER_MILLION"), Some(MeasureProto::Dv01PerMillion));
-    assert_eq!(MeasureProto::Dv01PerMillion.as_str_name(), "DV01_PER_MILLION");
+    assert_eq!(MeasureProto::from_i32(25), Some(MeasureProto::Dv01));
+    assert_eq!(MeasureProto::from_i32(31), None);
+    // The removed name, split so the LM-514 grep finds it only in measure.proto.
+    assert_eq!(MeasureProto::from_str_name(concat!("DV01", "_PER_MILLION")), None);
 }
 
 #[test]
@@ -64,17 +66,17 @@ fn request_round_trips_every_new_field() {
             calendar_id: "US_SIFMA".to_string(),
         })
     );
-    assert_eq!(decoded.measures, vec![31, 25]);
+    assert_eq!(decoded.measures, vec![25]);
 }
 
 #[test]
-fn response_round_trips_both_dates_and_a_dv01_per_million_result() {
+fn response_round_trips_both_dates_and_a_dv01_result() {
     let response = ValuationResponseProto {
         valuation_request: Some(full_request()),
         settlement_date: Some(date(2026, 11, 27)),
         measure_asof_date: Some(date(2026, 11, 27)),
         measure_results: vec![MeasureMapEntry {
-            measure: MeasureProto::Dv01PerMillion as i32,
+            measure: MeasureProto::Dv01 as i32,
             measure_decimal_value: Some(decimal("502.50")),
         }],
         ..Default::default()
@@ -83,7 +85,7 @@ fn response_round_trips_both_dates_and_a_dv01_per_million_result() {
     assert_eq!(decoded, response);
     assert_eq!(decoded.settlement_date, Some(date(2026, 11, 27)));
     assert_eq!(decoded.measure_asof_date, Some(date(2026, 11, 27)));
-    assert_eq!(decoded.measure_results[0].measure, 31);
+    assert_eq!(decoded.measure_results[0].measure, 25);
     assert_eq!(decoded.measure_results[0].measure_decimal_value, Some(decimal("502.50")));
 }
 

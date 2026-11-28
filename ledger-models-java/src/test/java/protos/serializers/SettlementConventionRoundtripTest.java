@@ -24,11 +24,12 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * LM-509 — the settlement convention and DV01_PER_MILLION contract.
+ * LM-509 — the settlement convention contract.
  *
- * <p>A request with SettlementConventionProto (80) and DV01_PER_MILLION, and a
- * response with settlement_date (60), measure_asof_date (61) and a
- * DV01_PER_MILLION result, round-trip unchanged. Request bytes written by
+ * <p>A request with SettlementConventionProto (80) and DV01, and a response
+ * with settlement_date (60), measure_asof_date (61) and a DV01 result,
+ * round-trip unchanged. Measure 31, which LM-509 added, is removed and
+ * reserved (LM-514); DV01 stays 25. Request bytes written by
  * v1.1.62 parse with the convention unset and every existing field as it was.
  * {@link ValuationRequests#settlementConvention} checks only the calendar-free
  * rules the proto comment states; it computes no date.
@@ -43,7 +44,6 @@ class SettlementConventionRoundtripTest {
 
     private static ValuationRequestProto fullRequest() {
         return ValuationRequestProto.newBuilder()
-                .addMeasures(MeasureProto.DV01_PER_MILLION)
                 .addMeasures(MeasureProto.DV01)
                 .setSettlementConvention(ValuationRequests.settlementConvention(date(2026, 11, 25), 1, "US_SIFMA"))
                 .build();
@@ -53,12 +53,18 @@ class SettlementConventionRoundtripTest {
         return e.getViolations().stream().map(FieldViolationProto::getField).collect(Collectors.toList());
     }
 
+    // The removed name, split so the LM-514 grep finds it only in measure.proto.
+    private static final String REMOVED_31 = "DV01" + "_PER_MILLION";
+
     @Test
-    void dv01PerMillionIs31AndDv01Stays25() {
-        assertEquals(31, MeasureProto.DV01_PER_MILLION.getNumber());
+    void dv01Stays25AndNothingIs31() {
         assertEquals(25, MeasureProto.DV01.getNumber());
-        assertEquals(MeasureProto.DV01_PER_MILLION, MeasureProto.valueOf("DV01_PER_MILLION"));
-        assertEquals("DV01_PER_MILLION", Measure.DV01_PER_MILLION.name());
+        assertEquals(MeasureProto.DV01, MeasureProto.forNumber(25));
+        assertNull(MeasureProto.forNumber(31));
+        assertNull(MeasureProto.getDescriptor().findValueByNumber(31));
+        assertNull(MeasureProto.getDescriptor().findValueByName(REMOVED_31));
+        assertThrows(IllegalArgumentException.class, () -> MeasureProto.valueOf(REMOVED_31));
+        assertThrows(IllegalArgumentException.class, () -> Measure.valueOf(REMOVED_31));
     }
 
     @Test
@@ -71,24 +77,24 @@ class SettlementConventionRoundtripTest {
         assertEquals(date(2026, 11, 25), convention.getTradeDate());
         assertEquals(1, convention.getSettlementLagBusinessDays());
         assertEquals("US_SIFMA", convention.getCalendarId());
-        assertEquals(List.of(MeasureProto.DV01_PER_MILLION, MeasureProto.DV01), parsed.getMeasuresList());
+        assertEquals(List.of(MeasureProto.DV01), parsed.getMeasuresList());
     }
 
     @Test
-    void responseRoundTripsBothDatesAndADv01PerMillionResult() throws InvalidProtocolBufferException {
+    void responseRoundTripsBothDatesAndADv01Result() throws InvalidProtocolBufferException {
         ValuationResponseProto response = ValuationResponseProto.newBuilder()
                 .setValuationRequest(fullRequest())
                 .setSettlementDate(date(2026, 11, 27))
                 .setMeasureAsofDate(date(2026, 11, 27))
                 .addMeasureResults(MeasureMapEntry.newBuilder()
-                        .setMeasure(MeasureProto.DV01_PER_MILLION)
+                        .setMeasure(MeasureProto.DV01)
                         .setMeasureDecimalValue(Decimals.decimal("502.50")))
                 .build();
         ValuationResponseProto parsed = ValuationResponseProto.parseFrom(response.toByteArray());
         assertEquals(response, parsed);
         assertEquals(date(2026, 11, 27), parsed.getSettlementDate());
         assertEquals(date(2026, 11, 27), parsed.getMeasureAsofDate());
-        assertEquals(MeasureProto.DV01_PER_MILLION, parsed.getMeasureResults(0).getMeasure());
+        assertEquals(MeasureProto.DV01, parsed.getMeasureResults(0).getMeasure());
         assertEquals(Decimals.decimal("502.50"), parsed.getMeasureResults(0).getMeasureDecimalValue());
     }
 

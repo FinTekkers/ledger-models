@@ -1,9 +1,10 @@
 /**
- * LM-509 — the settlement convention and DV01_PER_MILLION contract.
+ * LM-509 — the settlement convention contract.
  *
- * A request with SettlementConventionProto (80) and DV01_PER_MILLION, and a
- * response with settlement_date (60), measure_asof_date (61) and a
- * DV01_PER_MILLION result, round-trip unchanged. Request bytes written by
+ * A request with SettlementConventionProto (80) and DV01, and a response with
+ * settlement_date (60), measure_asof_date (61) and a DV01 result, round-trip
+ * unchanged. Measure 31, which LM-509 added, is removed and reserved (LM-514);
+ * DV01 stays 25. Request bytes written by
  * v1.1.62 parse with the convention unset and every existing field as it was.
  * ValuationRequests.settlementConvention checks only the calendar-free rules
  * the proto comment states; it computes no date.
@@ -37,7 +38,7 @@ function date(year: number, month: number, day: number): LocalDateProto {
 
 function fullRequest(): ValuationRequestProto {
     return new ValuationRequestProto()
-        .setMeasuresList([MeasureProto.DV01_PER_MILLION, MeasureProto.DV01])
+        .setMeasuresList([MeasureProto.DV01])
         .setSettlementConvention(ValuationRequests.settlementConvention(date(2026, 11, 25), 1, 'US_SIFMA'));
 }
 
@@ -51,10 +52,13 @@ function violationFields(call: () => unknown): string[] {
     throw new Error('expected a ModelValidationError');
 }
 
-describe('LM-509 settlement convention and DV01_PER_MILLION', () => {
-    test('DV01_PER_MILLION is 31 and DV01 stays 25', () => {
-        expect(MeasureProto.DV01_PER_MILLION).toBe(31);
+describe('LM-509 settlement convention', () => {
+    test('DV01 stays 25 and nothing is 31', () => {
+        // The generated measure_pb.js enum object, not a wrapper list.
         expect(MeasureProto.DV01).toBe(25);
+        expect(Object.values(MeasureProto)).not.toContain(31);
+        // The removed name, split so the LM-514 grep finds it only in measure.proto.
+        expect(Object.keys(MeasureProto)).not.toContain('DV01' + '_PER_MILLION');
     });
 
     test('a request round-trips every new field', () => {
@@ -66,12 +70,12 @@ describe('LM-509 settlement convention and DV01_PER_MILLION', () => {
         expect(convention.getTradeDate()!.toObject()).toEqual({ year: 2026, month: 11, day: 25 });
         expect(convention.getSettlementLagBusinessDays()).toBe(1);
         expect(convention.getCalendarId()).toBe('US_SIFMA');
-        expect(parsed.getMeasuresList()).toEqual([MeasureProto.DV01_PER_MILLION, MeasureProto.DV01]);
+        expect(parsed.getMeasuresList()).toEqual([MeasureProto.DV01]);
     });
 
-    test('a response round-trips both dates and a DV01_PER_MILLION result', () => {
+    test('a response round-trips both dates and a DV01 result', () => {
         const result = new MeasureMapEntry();
-        result.setMeasure(MeasureProto.DV01_PER_MILLION);
+        result.setMeasure(MeasureProto.DV01);
         result.setMeasureDecimalValue(decimal('502.50'));
         const response = new ValuationResponseProto()
             .setValuationRequest(fullRequest())
@@ -83,7 +87,7 @@ describe('LM-509 settlement convention and DV01_PER_MILLION', () => {
         expect(parsed.getSettlementDate()!.toObject()).toEqual({ year: 2026, month: 11, day: 27 });
         expect(parsed.getMeasureAsofDate()!.toObject()).toEqual({ year: 2026, month: 11, day: 27 });
         const [entry] = parsed.getMeasureResultsList();
-        expect(entry.getMeasure()).toBe(MeasureProto.DV01_PER_MILLION);
+        expect(entry.getMeasure()).toBe(MeasureProto.DV01);
         expect(toCanonicalString(decodeDecimal(entry.getMeasureDecimalValue()!))).toBe('502.50');
     });
 

@@ -1,8 +1,9 @@
 """wire-diff.py rule lm509 allows exactly SettlementConventionProto and its
 three fields, ValuationRequestProto.settlement_convention = 80,
-ValuationResponseProto.settlement_date = 60 and measure_asof_date = 61, and
-MeasureProto.DV01_PER_MILLION = 31, all as additions. A removed, renumbered or
-retyped field or value, DV01 = 25 included, is rejected.
+ValuationResponseProto.settlement_date = 60 and measure_asof_date = 61, all as
+additions. A removed, renumbered or retyped field or value, DV01 = 25
+included, is rejected. Measure 31, which LM-509 also added, is removed by
+LM-514 (test_wire_diff_lm514.py), so lm509 no longer allows adding it.
 
 Keys use wire-diff's shape() form, with the leading dot. The values come from
 test-fixtures/field-changes/lm-509.json.
@@ -35,13 +36,12 @@ def test_the_additions_are_allowed():
     assert wire_diff.lm509(_field(REQUEST, 80), None, f"{CONVENTION} settlement_convention", {})
     assert wire_diff.lm509(_field(RESPONSE, 60), None, f"{LOCAL_DATE} settlement_date", {})
     assert wire_diff.lm509(_field(RESPONSE, 61), None, f"{LOCAL_DATE} measure_asof_date", {})
-    assert wire_diff.lm509(f"value {MEASURE} = 31", None, "DV01_PER_MILLION", {})
-    assert len(wire_diff.LM509) == 8
+    assert len(wire_diff.LM509) == 7
 
 
 def test_a_renumbered_addition_is_rejected():
     assert not wire_diff.lm509(_field(REQUEST, 81), None, f"{CONVENTION} settlement_convention", {})
-    assert not wire_diff.lm509(f"value {MEASURE} = 32", None, "DV01_PER_MILLION", {})
+    assert not wire_diff.lm509(_field(CONVENTION, 4), None, "string calendar_id", {})
     assert not wire_diff.lm509(_field(RESPONSE, 62), None, f"{LOCAL_DATE} measure_asof_date", {})
 
 
@@ -53,7 +53,7 @@ def test_another_type_or_name_is_rejected():
 
 
 def test_a_changed_or_removed_existing_field_or_value_is_rejected():
-    assert not wire_diff.lm509(f"value {MEASURE} = 25", "DV01", "DV01_PER_MILLION", {})
+    assert not wire_diff.lm509(f"value {MEASURE} = 25", "DV01", "DV01_RENAMED", {})
     assert not wire_diff.lm509(f"value {MEASURE} = 25", "DV01", None, {})
     assert not wire_diff.lm509(_field(REQUEST, 23), ".fintekkers.models.util.LocalTimestampProto asof_datetime", None, {})
     assert not wire_diff.lm509(_field(REQUEST, 80), f"{CONVENTION} settlement_convention", None, {})

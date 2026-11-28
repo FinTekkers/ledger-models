@@ -1,0 +1,7 @@
+{
+  "item": "LM-514",
+  "removed_values": [
+    {"enum": ".fintekkers.models.position.MeasureProto", "number": 31}
+  ],
+  "kept": {"enum": ".fintekkers.models.position.MeasureProto", "number": 25, "name": "DV01"}
+}

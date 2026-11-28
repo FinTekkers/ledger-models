@@ -889,32 +889,6 @@ public enum MeasureProto
    * <code>INFLATION_COMPENSATION = 30;</code>
    */
   INFLATION_COMPENSATION(30),
-  /**
-   * <pre>
-   * DV01_PER_MILLION (LM-509): the dollar value of a one-basis-point (0.01%)
-   * yield change per 1,000,000 face, in settlement currency. For a non-USD
-   * bond, read "dollar" as one unit of settlement currency.
-   * Size-independent, unlike DV01 (25), which is per the position's face.
-   * Formula:
-   *   DV01_PER_MILLION = ModifiedDuration × dirty price × 1,000,000 × 0.0001
-   *   Where dirty price is per unit of face (the % of par dirty price / 100).
-   * For ModifiedDuration=5 and dirty price 100.50:
-   *   DV01_PER_MILLION = 5 × 1.005 × 1,000,000 × 0.0001 = $502.50 per bp
-   *   per 1,000,000 face, whatever the position's face.
-   * Model assumptions:
-   *   - Same sign convention as DV01: positive for a bond whose price falls
-   *     when its yield rises (the $502.50 above).
-   *   - Street/SIFMA stub convention on the dirty price, as for DV01 and
-   *     MODIFIED_DURATION, at the request's effective settlement date (see
-   *     ValuationRequestProto.settlement_convention).
-   *   - Computed by valuation-service. ledger-models carries the value only.
-   * Applicability: as DV01.
-   * Units: Dollars (settlement currency) per basis point per 1,000,000 face.
-   * </pre>
-   *
-   * <code>DV01_PER_MILLION = 31;</code>
-   */
-  DV01_PER_MILLION(31),
   UNRECOGNIZED(-1),
   ;
 
@@ -1788,32 +1762,6 @@ public enum MeasureProto
    * <code>INFLATION_COMPENSATION = 30;</code>
    */
   public static final int INFLATION_COMPENSATION_VALUE = 30;
-  /**
-   * <pre>
-   * DV01_PER_MILLION (LM-509): the dollar value of a one-basis-point (0.01%)
-   * yield change per 1,000,000 face, in settlement currency. For a non-USD
-   * bond, read "dollar" as one unit of settlement currency.
-   * Size-independent, unlike DV01 (25), which is per the position's face.
-   * Formula:
-   *   DV01_PER_MILLION = ModifiedDuration × dirty price × 1,000,000 × 0.0001
-   *   Where dirty price is per unit of face (the % of par dirty price / 100).
-   * For ModifiedDuration=5 and dirty price 100.50:
-   *   DV01_PER_MILLION = 5 × 1.005 × 1,000,000 × 0.0001 = $502.50 per bp
-   *   per 1,000,000 face, whatever the position's face.
-   * Model assumptions:
-   *   - Same sign convention as DV01: positive for a bond whose price falls
-   *     when its yield rises (the $502.50 above).
-   *   - Street/SIFMA stub convention on the dirty price, as for DV01 and
-   *     MODIFIED_DURATION, at the request's effective settlement date (see
-   *     ValuationRequestProto.settlement_convention).
-   *   - Computed by valuation-service. ledger-models carries the value only.
-   * Applicability: as DV01.
-   * Units: Dollars (settlement currency) per basis point per 1,000,000 face.
-   * </pre>
-   *
-   * <code>DV01_PER_MILLION = 31;</code>
-   */
-  public static final int DV01_PER_MILLION_VALUE = 31;
 
 
   public final int getNumber() {
@@ -1870,7 +1818,6 @@ public enum MeasureProto
       case 28: return REFERENCE_CPI;
       case 29: return INDEX_RATIO;
       case 30: return INFLATION_COMPENSATION;
-      case 31: return DV01_PER_MILLION;
       default: return null;
     }
   }
